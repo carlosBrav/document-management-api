@@ -1,8 +1,12 @@
 package controllers
 
+import java.io.File
+
 import javax.inject._
 import play.api._
 import play.api.mvc._
+
+import scala.concurrent.ExecutionContext
 
 /**
  * This controller creates an `Action` to handle HTTP requests to the
@@ -10,7 +14,7 @@ import play.api.mvc._
  */
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents) extends AbstractController(cc) {
-
+  implicit val ec: ExecutionContext = defaultExecutionContext
   /**
    * Create an Action to render an HTML page.
    *
@@ -18,16 +22,8 @@ class HomeController @Inject()(cc: ControllerComponents) extends AbstractControl
    * will be called when the application receives a `GET` request with
    * a path of `/`.
    */
-  def index() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.index())
-  }
-  
-  def explore() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.explore())
-  }
-  
-  def tutorial() = Action { implicit request: Request[AnyContent] =>
-    Ok(views.html.tutorial())
+  def index(path:String): Action[AnyContent] = Action { implicit request =>
+    Ok.sendFile(new File("public/index.html"))
   }
   
 }

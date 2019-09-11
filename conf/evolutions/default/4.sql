@@ -1,0 +1,5 @@
+# --- !Ups
+
+ALTER TABLE DOCUMENTOS_INTERNOS
+ADD COLUMN `num_documento` varchar(45) NOT NULL,
+ADD COLUMN `siglas` VARCHAR(12) NOT NULL;
