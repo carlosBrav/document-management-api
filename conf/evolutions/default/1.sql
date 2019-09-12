@@ -1,12 +1,4 @@
 # --- !Ups
-CREATE TABLE IF NOT EXISTS ACTIONS (
-  `id` varchar(40) NOT NULL,
-  `name` varchar(225) NOT NULL,
-  `create_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-
 CREATE TABLE IF NOT EXISTS ROL (
   `id` varchar(45) NOT NULL,
   `nombre` varchar(45) NOT NULL,
