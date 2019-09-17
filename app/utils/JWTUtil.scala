@@ -12,7 +12,7 @@ object JWTUtil {
   private val JwtSecretAlgorithm = JwtAlgorithm.HS256
   val SECONDS_DAY = 86400
 
-  def createToken(payload: Map[String, Any], nameRole: String): String = {
+  def createToken(payload: Map[String, Any]): String = {
     Jwt.encode(JwtClaim(Json.stringify(Json.toJson(payload))).issuedNow.expiresIn(SECONDS_DAY*60), JwtSecretKey, JwtSecretAlgorithm)
   }
 

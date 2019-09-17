@@ -10,6 +10,19 @@ import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.libs.functional.syntax._
 
+object ResponseCodes {
+  val SUCCESS = 0
+  val GENERIC_ERROR = 100
+  val CONFLICT_ERROR = 409
+  val MISSING_FIELDS = 422
+  val UNAUTHORIZED = 401
+  val USER_NOT_FOUND= 404
+  val FORBIDDEN  = 403
+  val USER_DISABLED = 102
+  val DUPLICATED_INFO = 405
+  val USUARIO_INACTIVO = 101
+}
+
 object Constants {
 
   def JsonOk[T](t: T)(implicit writes: Writes[T]): Result = Ok(Json.toJson(t))
@@ -20,6 +33,17 @@ object Constants {
 
   case class ResponseError[T](responseCode: Int, responseMessage: T)
 
+  case class CustomResponseException(codeException: Int, message: String)
+
+  private val genericError = CustomResponseException(ResponseCodes.GENERIC_ERROR,"Generic Error")
+
+  private val  errorsMap: Map[Int, CustomResponseException] = Map(
+    ResponseCodes.SUCCESS -> CustomResponseException(ResponseCodes.SUCCESS, "success"),
+    ResponseCodes.MISSING_FIELDS -> CustomResponseException(ResponseCodes.MISSING_FIELDS, "missing required parameter"),
+    ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario.")
+  )
+
+  def get(code: Int): CustomResponseException = errorsMap.getOrElse(code,genericError)
 
   object Implicits {
 
@@ -77,17 +101,9 @@ object Constants {
       errorSeq <- reqMessages.map(messageObj => if (messageObj != null && messageObj.message.nonEmpty) messageObj.message else "")
     } yield errorSeq
   }
-}
 
-object ResponseCodes {
-  val SUCCESS = 0
-  val GENERIC_ERROR = 100
-  val CONFLICT_ERROR = 409
-  val MISSING_FIELDS = 422
-  val UNAUTHORIZED = 401
-  val USER_NOT_FOUND= 404
-  val FORBIDDEN  = 403
-  val USER_NOT_VALIDATED = 101
-  val USER_DISABLED = 102
-  val DUPLICATED_INFO = 405
+  def convertToString(ts: Timestamp):String = {
+    val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    df.format(ts)
+  }
 }

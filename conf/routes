@@ -4,6 +4,8 @@
 # ~~~~
 
 # An example controller showing a sample home page
+POST          /api/login                                  controllers.AuthController.login
+
 GET           /                                           controllers.HomeController.index(path = "home")
 GET           /*path                                      controllers.HomeController.index(path)
 

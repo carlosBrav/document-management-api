@@ -7,13 +7,15 @@ import slick.jdbc.MySQLProfile.api._
 
 abstract class BaseEntityTable[E: ClassTag](tag: Tag, tableName: String) extends Table[E](tag, tableName) {
   val id: Rep[String] = column[String]("ID", O.PrimaryKey)
+  val fechaCreacion: Rep[Timestamp] = column[Timestamp]("FECHA_CREACION")
+  val fechaModificacion: Rep[Timestamp] = column[Timestamp]("FECHA_MODIFICACION")
 }
 
 class RolTable(tag: Tag) extends BaseEntityTable[Rol](tag,"ROL") {
   def nombre = column[String]("NOMBRE")
 
   def * =
-    (id.?, nombre) <>
+    (id.?, nombre, fechaCreacion.?, fechaModificacion.?) <>
       (Rol.tupled, Rol.unapply)
 }
 
@@ -25,8 +27,6 @@ class UsuarioTable(tag: Tag) extends BaseEntityTable[Usuario](tag,"USUARIO") {
   def nombre = column[String]("NOMBRE")
   def apellido = column[String]("APELLIDO")
   def telefono = column[String]("TELEFONO")
-  def fechaCreacion = column[Timestamp]("FECHA_CREACION")
-  def fechaModificacion = column[Timestamp]("FECHA_MODIFICACION")
 
   def * =
     (id.?, usuario,password,estado,rolId,nombre,apellido,telefono.?,
@@ -51,7 +51,8 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
 
   def * =
     (id.?,movimiento,numTram,estadoDocumento,estadoConfirmacion,documentosInternosId.?,dependenciasId,dependenciasId1,
-      asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?) <>
+      asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?,
+      fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
 }
 
@@ -61,7 +62,7 @@ class DependenciaTable(tag: Tag) extends BaseEntityTable[Dependencias](tag,"DEPE
   def siglas= column[String]("SIGLAS")
   def codigo= column[String]("CODIGO")
 
-  def * = (id.?, nombre, estado, siglas.?, codigo) <>
+  def * = (id.?, nombre, estado, siglas.?, codigo, fechaCreacion.?, fechaModificacion.?) <>
     (Dependencias.tupled, Dependencias.unapply)
 }
 
@@ -70,12 +71,11 @@ class TipoDocumentoTable(tag: Tag) extends BaseEntityTable[TipoDocumento](tag,"T
   def flag1= column[String]("FLAG1")
   def flag2= column[String]("FLAG2")
 
-  def * = (id.?, nombreTipo, flag1.?, flag2.?) <> (TipoDocumento.tupled, TipoDocumento.unapply)
+  def * = (id.?, nombreTipo, flag1.?, flag2.?, fechaCreacion.?, fechaModificacion.?) <>
+    (TipoDocumento.tupled, TipoDocumento.unapply)
 }
 
 class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos](tag,"DOCUMENTOS_INTERNOS") {
-  def fechaCreacion = column[Timestamp]("FECHA_CREACION")
-  def fechaModificacion = column[Timestamp]("FECHA_MODIFICACION")
   def estado =column[Boolean]("ESTADO")
   def tipoDocuId = column[String]("TIPO_DOCU_ID")
 

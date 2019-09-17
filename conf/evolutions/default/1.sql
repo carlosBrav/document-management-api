@@ -2,6 +2,8 @@
 CREATE TABLE IF NOT EXISTS ROL (
   `id` varchar(45) NOT NULL,
   `nombre` varchar(45) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB DEFAULT CHARSET=utf8;
 
@@ -28,6 +30,8 @@ CREATE TABLE IF NOT EXISTS DEPENDENCIAS (
   `estado` tinyint(4) NOT NULL DEFAULT '1',
   `siglas` varchar(45) NULL,
   `codigo` varchar(45) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `codigo` (`codigo` ASC))
 ENGINE = InnoDB DEFAULT CHARSET=utf8;
@@ -48,6 +52,8 @@ CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
   `Usuario_id` varchar(45) NOT NULL,
   `num_tram` varchar(45) NOT NULL,
   `movimiento` INT NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `fk_Movimientos_Dependencias1_idx` (`Dependencias_id` ASC),
   INDEX `fk_Movimientos_Dependencias2_idx` (`Dependencias_id1` ASC),
@@ -62,16 +68,18 @@ CREATE TABLE IF NOT EXISTS TIPO_DOCUMENTO (
   `nombre_tipo` varchar(45) NULL,
   `flag1` varchar(45) NULL,
   `flag2` varchar(45) NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`))
 ENGINE = InnoDB DEFAULT CHARSET=utf8;
 
 
 CREATE TABLE IF NOT EXISTS DOCUMENTOS_INTERNOS (
   `id` varchar(45) NOT NULL,
-  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `estado` varchar(45) NULL,
   `Tipo_docu_id` varchar(45) NOT NULL,
+  `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   INDEX `fk_Documentos_internos_TIPO_DOCU1_idx` (`Tipo_docu_id` ASC)
   )
