@@ -4,7 +4,11 @@
 # ~~~~
 
 # An example controller showing a sample home page
+#LOGIN
 POST          /api/login                                  controllers.AuthController.login
+
+#VIEWS
+GET           /api/view2                                  controllers.ViewsController.loadView2
 
 GET           /                                           controllers.HomeController.index(path = "home")
 GET           /*path                                      controllers.HomeController.index(path)

@@ -17,7 +17,6 @@ object AuthControllerHelper {
 
   case class ResponseLogin(id: Option[String],
                            usuario: String,
-                           password: String,
                            token: String,
                            estado: Boolean,
                            rolId: String,

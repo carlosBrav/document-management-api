@@ -39,7 +39,7 @@ class AuthController @Inject()(
               "apellido" -> users.apellido))
             JsonOk(
               Response[ResponseLogin](ResponseCodes.SUCCESS,"success",
-                ResponseLogin(users.id, users.usuario, users.password, token, users.estado, users.rolId,
+                ResponseLogin(users.id, users.usuario, token, users.estado, users.rolId,
                   users.nombre, users.apellido, users.telefono, Option(convertToString(users.fechaCreacion.get)),
                   Option(convertToString(users.fechaModificacion.get))))
             )

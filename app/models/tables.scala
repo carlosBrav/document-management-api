@@ -82,3 +82,40 @@ class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos
   def * = (id.?, fechaCreacion.?, fechaModificacion.?, estado, tipoDocuId) <>
     (DocumentosInternos.tupled, DocumentosInternos.unapply)
 }
+
+class Vista1Table(tag: Tag) extends Table[Vista1](tag, "VISTA1") {
+  def tramNum = column[String]("TRAM_NUM")
+  def tramFecha = column[Timestamp]("TRAM_FECHA")
+  def depeOrigen = column[String]("DEPE_ORIGEN")
+  def depeCod = column[String]("DEPE_COD")
+  def tramObs = column[String]("TRAM_OBS")
+  def estaDescrip = column[String]("ESTA_DESCRIP")
+  def usu  = column[String]("USU")
+  def usuNom = column[String]("USU_NOM")
+  def docuPric = column[String]("DOCU_PRIC")
+  def docuNombre = column[String]("DOCU_NOMBRE")
+  def docuNum = column[String]("DOCU_NUM")
+  def docuSiglas = column[String]("DOCU_SIGLAS")
+  def docuAnio = column[String]("DOCU_ANIO")
+
+  def * = (tramNum, tramFecha.?, depeOrigen, depeCod, tramObs.?, estaDescrip.?, usu, usuNom,
+    docuPric.?, docuNombre.?, docuNum.?, docuSiglas, docuAnio) <> (Vista1.tupled, Vista1.unapply)
+}
+
+class Vista2Table(tag: Tag) extends Table[Vista2](tag, "VISTA2") {
+  def tramNum = column[String]("TRAM_NUM")
+  def moviNum = column[Int]("MOVI_NUM")
+  def moviOrigen = column[String]("MOVI_ORIGEN")
+  def depeCod = column[String]("DEPE_COD")
+  def moviDestino = column[String]("MOVI_DESTINO")
+  def destCod = column[String]("DEST_COD")
+  def moviFecEnv  = column[Timestamp]("MOVI_FEC_ENV")
+  def moviFecIng = column[Timestamp]("MOVI_FEC_ING")
+  def indiNombre = column[String]("INDI_NOMBRE")
+  def indiCod = column[String]("INDI_COD")
+  def moviObs = column[String]("MOVI_OBS")
+  def estaNombre = column[String]("ESTA_NOMBRE")
+
+  def * = (tramNum, moviNum, moviOrigen, depeCod, moviDestino, destCod, moviFecEnv.?, moviFecIng.?,
+    indiNombre.?, indiCod.?, moviObs.?, estaNombre) <> (Vista2.tupled, Vista2.unapply)
+}

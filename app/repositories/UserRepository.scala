@@ -12,9 +12,4 @@ import scala.concurrent.Future
 @Singleton
 class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)
   extends BaseEntityRepository[UsuarioTable, Usuario](dbConfigProvider, TableQuery[UsuarioTable])
-{
-  def loadByUsuario(usuario: String) = {
-    filter(user => user.usuario === usuario && user.estado === true).
-      map(users => Some(users.head)) recover { case _ : Exception => None}
-  }
-}
+

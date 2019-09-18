@@ -67,3 +67,31 @@ case class DocumentosInternos(id: Option[String],
                               estado: Boolean,
                               tipoDocuId: String,
                              ) extends BaseEntity
+
+
+case class Vista1(tramNum: String,
+                  tramFecha: Option[Timestamp],
+                  depeOrigen: String,
+                  depeCod: String,
+                  tramObs: Option[String],
+                  estaDescrip: Option[String],
+                  usu: String,
+                  usuNom: String,
+                  docuPric: Option[String],
+                  docuNombre: Option[String],
+                  docuNum: Option[String],
+                  docuSiglas: String,
+                  docuAnio: String)
+
+case class Vista2(tramNum: String,
+                  moviNum: Int,
+                  moviOrigen: String,
+                  depeCod: String,
+                  moviDestino: String,
+                  destCod: String,
+                  moviFecEnv: Option[Timestamp],
+                  moviFecIng: Option[Timestamp],
+                  indiNombre: Option[String],
+                  indiCod: Option[String],
+                  moviObs: Option[String],
+                  estaNombre: String)

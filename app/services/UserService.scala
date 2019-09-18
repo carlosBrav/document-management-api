@@ -21,14 +21,12 @@ class UserService @Inject()(
   val logger = Logger(this.getClass)
 
   def processLogin(usuario: String, password: String): Future[Try[Usuario]] = {
-    println(s"valores $usuario $password")
     val userFilterByUsuario = repository.filter(_.usuario === usuario)
 
     val userLogin = {
       for {
         userResult <- userFilterByUsuario.map(_.head)
       } yield {
-        println(s"lista filtrada $userResult")
         if(userResult.estado){
           if (validateHashPass(password, userResult.password)) {
             Try(userResult)

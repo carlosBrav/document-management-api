@@ -103,7 +103,7 @@ object Constants {
   }
 
   def convertToString(ts: Timestamp):String = {
-    val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
+    val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     df.format(ts)
   }
 }
