@@ -92,8 +92,8 @@ CREATE TABLE vista2 (
   `DEPE_COD` varchar(45) DEFAULT NULL,
   `MOVI_DESTINO` varchar(350) DEFAULT NULL,
   `DEST_COD` varchar(45) DEFAULT NULL,
-  `MOVI_FEC_ENV` timestamp DEFAULT NULL,
-  `MOVI_FEC_ING` timestamp DEFAULT NULL,
+  `MOVI_FEC_ENV` timestamp NULL,
+  `MOVI_FEC_ING` timestamp NULL,
   `INDI_NOMBRE` varchar(45) DEFAULT NULL,
   `INDI_COD` varchar(45) DEFAULT NULL,
   `MOVI_OBS` varchar(450) DEFAULT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE vista2 (
 
 CREATE TABLE vista1 (
   `TRAM_NUM` varchar(20) DEFAULT NULL,
-  `TRAM_FECHA` timestamp DEFAULT NULL,
+  `TRAM_FECHA` timestamp NULL,
   `DEPE_ORIGEN` varchar(250) DEFAULT NULL,
   `DEPE_COD` varchar(45) DEFAULT NULL,
   `TRAM_OBS` varchar(250) DEFAULT NULL,
