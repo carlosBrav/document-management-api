@@ -23,6 +23,10 @@ object ResponseCodes {
   val USUARIO_INACTIVO = 101
 }
 
+object Format {
+  val DATE = "yyyy-MM-dd HH:mm:ss"
+}
+
 object Constants {
 
   def JsonOk[T](t: T)(implicit writes: Writes[T]): Result = Ok(Json.toJson(t))
@@ -40,7 +44,8 @@ object Constants {
   private val  errorsMap: Map[Int, CustomResponseException] = Map(
     ResponseCodes.SUCCESS -> CustomResponseException(ResponseCodes.SUCCESS, "success"),
     ResponseCodes.MISSING_FIELDS -> CustomResponseException(ResponseCodes.MISSING_FIELDS, "missing required parameter"),
-    ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario.")
+    ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario."),
+
   )
 
   def get(code: Int): CustomResponseException = errorsMap.getOrElse(code,genericError)
@@ -105,5 +110,14 @@ object Constants {
   def convertToString(ts: Timestamp):String = {
     val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
     df.format(ts)
+  }
+
+  def convertToDate(s: String): Date = {
+    if(!s.isEmpty){
+      val dateFormat = new SimpleDateFormat(Format.DATE)
+      dateFormat.parse(s)
+    }else{
+      new Date()
+    }
   }
 }

@@ -36,8 +36,8 @@ case class Dependencias(id: Option[String],
                        ) extends BaseEntity
 
 case class Movimientos(id: Option[String],
-                       movimiento: Int,
-                       numTram: String,
+                       movimiento: Option[Int],
+                       numTram: Option[String],
                        estadoDocumento: String,
                        estadoConfirmacion: Boolean,
                        documentosInternosId: Option[String],

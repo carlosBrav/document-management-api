@@ -50,7 +50,7 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
   def observacion= column[String]("OBSERVACION")
 
   def * =
-    (id.?,movimiento,numTram,estadoDocumento,estadoConfirmacion,documentosInternosId.?,dependenciasId,dependenciasId1,
+    (id.?,movimiento.?,numTram.?,estadoDocumento,estadoConfirmacion,documentosInternosId.?,dependenciasId,dependenciasId1,
       asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?,
       fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
