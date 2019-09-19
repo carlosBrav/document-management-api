@@ -8,7 +8,7 @@ import slick.jdbc.MySQLProfile.api._
 import models.{Vista1, Vista1Table, Vista2, Vista2Table}
 
 import utils.Constants.convertToDate
-import repositories.{MovimientosRepository}
+import repositories.{MovimientosRepository} 
 import models.{Movimientos}
 
 import scala.concurrent.Future
