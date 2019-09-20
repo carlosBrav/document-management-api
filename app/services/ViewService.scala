@@ -20,15 +20,16 @@ class ViewService @Inject()(
 
 
   def getAllView2(day: String) = {
+    val timeStampStart = new java.sql.Timestamp(convertToDate(day+" 00:00:00").getTime)
+    val timeStampEnd = new java.sql.Timestamp(convertToDate(day+" 23:59:59").getTime)
     val listReturn = {
       for{
-        movements <- movimientos.getMovimientos
-        //movementsColumns <- movements.map(mov => (mov.numTram, mov.movimiento))
-        view2Result <- repository.getAllView2Today(day, movements)
+        movements <- movimientos.getMovimientos(timeStampStart,timeStampEnd)
+        view2Result <- repository.getAllView2Today(timeStampStart,timeStampEnd, movements)
       } yield {
-        val movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
-        val movementsFilter = view2Result
-        Try(view2Result)
+        var movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
+        val movementsFilter = view2Result.filter(x => !movementsTramMov.contains((Option(x.tramNum), Option(x.moviNum))))
+        Try(movementsFilter)
       }
     }recover{
       case e: Exception => Failure(new Exception(s"${ResponseCodes.GENERIC_ERROR}", e))
