@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
   `asignado_a` varchar(45) NULL,
   `Usuario_id` varchar(45) NOT NULL,
   `num_tram` varchar(45) NULL,
-  `movimiento` INT NULL,
+  `movimiento` INT NULL DEFAULT 0,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

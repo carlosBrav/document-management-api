@@ -26,6 +26,8 @@ class ViewService @Inject()(
         //movementsColumns <- movements.map(mov => (mov.numTram, mov.movimiento))
         view2Result <- repository.getAllView2Today(day, movements)
       } yield {
+        val movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
+        val movementsFilter = view2Result
         Try(view2Result)
       }
     }recover{
