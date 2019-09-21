@@ -27,13 +27,17 @@ class ViewService @Inject()(
         movements <- movimientos.getMovimientos(timeStampStart,timeStampEnd)
         view2Result <- repository.getAllView2Today(timeStampStart,timeStampEnd, movements)
       } yield {
-        var movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
-        val movementsFilter = view2Result.filter(x => !movementsTramMov.contains((Option(x.tramNum), Option(x.moviNum))))
+        val movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
+        val movementsFilter = view2Result.filter(x => x.moviFecIng.getOrElse("") == "").filter(x => !movementsTramMov.contains((Option(x.tramNum), Option(x.moviNum))))
         Try(movementsFilter)
       }
     }recover{
       case e: Exception => Failure(new Exception(s"${ResponseCodes.GENERIC_ERROR}", e))
     }
     listReturn
+  }
+
+  def insertFromView2() = {
+
   }
 }

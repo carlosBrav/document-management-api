@@ -24,7 +24,7 @@ class ViewsController @Inject()(
   def loadView2: Action[AnyContent] = Action.async{ implicit request =>
 
     val listResult = for {
-      Success(view2) <-viewService.getAllView2("2015-01-08")
+      Success(view2) <-viewService.getAllView2("2019-09-17")
     } yield {
       JsonOk(ResponseListView2(ResponseCodes.SUCCESS, "success", view2.map(view => toResponseView2(view))))
     }

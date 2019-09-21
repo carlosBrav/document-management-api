@@ -23,8 +23,12 @@ class ViewsRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, movimi
   def getAllView2Today(timeStampStart: Timestamp, timeStampEnd: Timestamp,
                        documents: Seq[Movimientos]): Future[Seq[Vista2]] = {
 
+    val destinations = List("1001868","1001869","1001870","1001871","1001872")
+
     val query = TableQuery[Vista2Table]
-    val action = query.filter(x => x.moviFecEnv.between(timeStampStart,timeStampEnd)).sortBy(x => x.moviFecEnv.desc).result
+    val action = query.filter(x => x.moviFecEnv.between(timeStampStart,timeStampEnd))
+      .filter(x => x.destCod.inSet(destinations) && x.destCod.inSetBind(destinations))
+      .sortBy(x => x.moviFecEnv.desc).result
     db.run(action)
   }
 }
