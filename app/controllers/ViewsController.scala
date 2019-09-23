@@ -26,7 +26,7 @@ class ViewsController @Inject()(
     val listResult = for {
       Success(view2) <-viewService.getAllView2("2019-09-17")
     } yield {
-      JsonOk(ResponseListView2(ResponseCodes.SUCCESS, "success", view2.map(view => toResponseView2(view))))
+      JsonOk(ResponseListView2(ResponseCodes.SUCCESS, "success", view2.map(view => toResponseView2(view._1, view._2))))
     }
     listResult recover {
       case e =>

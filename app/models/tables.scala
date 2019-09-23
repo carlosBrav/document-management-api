@@ -46,12 +46,14 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
   def usuarioId= column[String]("USUARIO_ID")
   def fechaIngreso= column[Timestamp]("FECHA_INGRESO")
   def fechaDerivacion= column[Timestamp]("FECHA_DERIVACION")
+  def indiNombre = column[String]("INDI_NOMBRE")
+  def indiCod = column[String]("INDI_COD")
   def fechaEnvio= column[Timestamp]("FECHA_ENVIO")
   def observacion= column[String]("OBSERVACION")
 
   def * =
     (id.?,movimiento.?,numTram.?,estadoDocumento,estadoConfirmacion,documentosInternosId.?,dependenciasId,dependenciasId1,
-      asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?,
+      asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?,indiCod.?, indiNombre.?,
       fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
 }

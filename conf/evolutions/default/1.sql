@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS USUARIO (
   `telefono` varchar(45) NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `Dependencia_id` varchar(45) NULL,
   PRIMARY KEY (`id`)
   )
 ENGINE = InnoDB DEFAULT CHARSET=utf8;
@@ -30,6 +31,7 @@ CREATE TABLE IF NOT EXISTS DEPENDENCIAS (
   `estado` tinyint(4) NOT NULL DEFAULT '1',
   `siglas` varchar(45) NULL,
   `codigo` varchar(45) NOT NULL,
+  `tipo` varchar(10) NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -51,6 +53,8 @@ CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
   `asignado_a` varchar(45) NULL,
   `Usuario_id` varchar(45) NOT NULL,
   `num_tram` varchar(45) NULL,
+  `indi_nombre` varchar(45) NULL,
+  `indi_cod` VARCHAR(12) NULL,
   `movimiento` INT NULL DEFAULT 0,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -78,6 +82,8 @@ CREATE TABLE IF NOT EXISTS DOCUMENTOS_INTERNOS (
   `id` varchar(45) NOT NULL,
   `estado` varchar(45) NULL,
   `Tipo_docu_id` varchar(45) NOT NULL,
+  `num_documento` varchar(45) NOT NULL,
+  `siglas` VARCHAR(12) NOT NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

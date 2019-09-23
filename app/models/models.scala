@@ -49,6 +49,8 @@ case class Movimientos(id: Option[String],
                        fechaDerivacion: Option[Timestamp],
                        fechaEnvio: Option[Timestamp],
                        observacion: Option[String],
+                       indiNombre: Option[String],
+                       indiCod: Option[String],
                        fechaCreacion: Option[Timestamp] ,
                        fechaModificacion: Option[Timestamp]
                       ) extends BaseEntity

@@ -25,11 +25,12 @@ class ViewService @Inject()(
     val listReturn = {
       for{
         movements <- movimientos.getMovimientos(timeStampStart,timeStampEnd)
-        view2Result <- repository.getAllView2Today(timeStampStart,timeStampEnd, movements)
+        joinView <- repository.getAllView2Today(timeStampStart,timeStampEnd, movements)
       } yield {
         val movementsTramMov = movements.map(mov => (mov.numTram, mov.movimiento))
-        val movementsFilter = view2Result.filter(x => x.moviFecIng.getOrElse("") == "").filter(x => !movementsTramMov.contains((Option(x.tramNum), Option(x.moviNum))))
-        Try(movementsFilter)
+        val joinViewFilter = joinView.filter(x => x._1.moviFecIng.getOrElse("") == "")
+          .filter(x => !movementsTramMov.contains((Option(x._1.tramNum), Option(x._1.moviNum))))
+        Try(joinViewFilter)
       }
     }recover{
       case e: Exception => Failure(new Exception(s"${ResponseCodes.GENERIC_ERROR}", e))

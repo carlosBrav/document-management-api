@@ -21,14 +21,19 @@ class ViewsRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, movimi
   val db: JdbcBackend#DatabaseDef = dbConfig.db
 
   def getAllView2Today(timeStampStart: Timestamp, timeStampEnd: Timestamp,
-                       documents: Seq[Movimientos]): Future[Seq[Vista2]] = {
+                       documents: Seq[Movimientos]) = {
 
     val destinations = List("1001868","1001869","1001870","1001871","1001872")
 
-    val query = TableQuery[Vista2Table]
-    val action = query.filter(x => x.moviFecEnv.between(timeStampStart,timeStampEnd))
-      .filter(x => x.destCod.inSet(destinations) && x.destCod.inSetBind(destinations))
-      .sortBy(x => x.moviFecEnv.desc).result
-    db.run(action)
+    val queryVista2 = TableQuery[Vista2Table]
+    val queryVista1 = TableQuery[Vista1Table]
+
+    val joinVistas = for {
+      (vista2, vista1) <- queryVista2.filter(x => x.moviFecEnv.between(timeStampStart,timeStampEnd))
+        .filter(x => x.destCod.inSet(destinations) && x.destCod.inSetBind(destinations))
+        .sortBy(x => x.moviFecEnv.desc) joinLeft queryVista1 on (_.tramNum === _.tramNum)
+    } yield(vista2, vista1)
+
+    db.run(joinVistas.result)
   }
 }
