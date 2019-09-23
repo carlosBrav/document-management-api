@@ -45,12 +45,15 @@ object Constants {
     ResponseCodes.SUCCESS -> CustomResponseException(ResponseCodes.SUCCESS, "success"),
     ResponseCodes.MISSING_FIELDS -> CustomResponseException(ResponseCodes.MISSING_FIELDS, "missing required parameter"),
     ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario."),
-
   )
 
   def get(code: Int): CustomResponseException = errorsMap.getOrElse(code,genericError)
 
   object Implicits {
+
+    implicit def ordered: Ordering[Timestamp] = new Ordering[Timestamp] {
+      def compare(x: Timestamp, y: Timestamp): Int = y compareTo x
+    }
 
     implicit val timestampFormat: Format[Timestamp] = new Format[Timestamp] {
       //      todo: Write correct implementation

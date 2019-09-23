@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS USUARIO (
   `telefono` varchar(45) NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `Dependencia_id` varchar(45) NULL,
+  `Dependencia_id` varchar(45) NOT NULL,
   PRIMARY KEY (`id`)
   )
 ENGINE = InnoDB DEFAULT CHARSET=utf8;

@@ -13,8 +13,8 @@ import slick.lifted.TableQuery
 class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider)
     extends BaseEntityRepository[MovimientoTable,Movimientos](dbConfigProvider, TableQuery[MovimientoTable]) {
 
-  def getMovimientos(timeStampStart: Timestamp, timeStampEnd: Timestamp) = {
+  def getMovimientos = {
 
-    filter(x => x.movimiento =!= 0 && x.numTram =!= "" && x.fechaEnvio.between(timeStampStart,timeStampEnd))
+    filter(x => x.movimiento =!= 0 && x.numTram =!= "" && x.documentosInternosId === "")
   }
 }

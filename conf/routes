@@ -10,6 +10,9 @@ POST          /api/login                                  controllers.AuthContro
 #VIEWS
 GET           /api/view2                                  controllers.ViewsController.loadView2
 
+#MOVEMENTS
+POST          /api/movements/save                         controllers.ViewsController.insertFromView2
+
 GET           /                                           controllers.HomeController.index(path = "home")
 GET           /*path                                      controllers.HomeController.index(path)
 

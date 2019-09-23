@@ -2,9 +2,13 @@ package helpers
 
 import java.sql.Timestamp
 
+
 import play.api.libs.json.{Format, Json, OFormat, OWrites, Reads, __}
-import models.{Vista1, Vista2}
+import models.{Movimientos, Vista1, Vista2}
+import repositories.MovimientosRepository
 import utils.Constants._
+import utils.UniqueId
+import java.util.Date
 
 object ViewsControllerHelper {
 
@@ -26,6 +30,22 @@ object ViewsControllerHelper {
                            docuAnio: String
                            )
 
+  case class MovimientoRequest(numTram: Option[String],
+                               movimiento: Option[Int],
+                               usuarioId: Option[String],
+                               observacion: Option[String],
+                               estadoDocumento: Option[String],
+                               documentoInternoId: Option[String],
+                               dependenciaId1: Option[String],
+                               dependenciaId2: Option[String],
+                               asignadoA: Option[String],
+                               indiCod: Option[String],
+                               indiNombre: Option[String],
+                               fechaEnvio: Option[String],
+                               fechaIngreso: Option[String])
+
+  implicit val movimientoRequestFormat: OFormat[MovimientoRequest] = Json.format[MovimientoRequest]
+
   implicit val responseView2Format: OFormat[ResponseView2] = Json.format[ResponseView2]
 
   case class ResponseListView2(responseCode: Int, responseMessage: String, data: Seq[ResponseView2])
@@ -42,5 +62,22 @@ object ViewsControllerHelper {
       vista1Value.docuAnio)
   }
 
-  case class RequestInsertFromView2()
+  case class RequestInsertFromView2(movimientos: Seq[MovimientoRequest], userId: String) {
+
+    def toMovimientosModels: Seq[Movimientos] = {
+
+      val movementModel = movimientos.map(movElement => {
+        val movementId = UniqueId.generateId
+        val elementModel = Movimientos(Some(movementId),movElement.movimiento,movElement.numTram,movElement.estadoDocumento.get,true,Some(""),movElement.dependenciaId1.get,
+          movElement.dependenciaId2.get,Some(""),userId,None,None,Some(new java.sql.Timestamp(convertToDate(movElement.fechaEnvio.get).getTime)),movElement.observacion,movElement.indiNombre,movElement.indiCod,
+          Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
+
+        elementModel
+      })
+      movementModel
+    }
+  }
+
+  implicit val requestInsertFromView2Format: OFormat[RequestInsertFromView2] = Json.format[RequestInsertFromView2]
+
 }

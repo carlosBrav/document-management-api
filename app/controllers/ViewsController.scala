@@ -2,10 +2,11 @@ package controllers
 
 import javax.inject.Inject
 import play.api.mvc._
+import play.api.libs.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
-import services.ViewService
+import services.{MovimientoService, ViewService}
 import utils.Constants._
 import utils.Constants.Implicits._
 import utils._
@@ -15,6 +16,7 @@ import play.api.Logger
 
 class ViewsController @Inject()(
                                viewService: ViewService,
+                               movimiento: MovimientoService,
                                cc: ControllerComponents
                                )extends AbstractController(cc) {
 
@@ -24,7 +26,7 @@ class ViewsController @Inject()(
   def loadView2: Action[AnyContent] = Action.async{ implicit request =>
 
     val listResult = for {
-      Success(view2) <-viewService.getAllView2("2019-09-17")
+      Success(view2) <-viewService.getAllView2
     } yield {
       JsonOk(ResponseListView2(ResponseCodes.SUCCESS, "success", view2.map(view => toResponseView2(view._1, view._2))))
     }
@@ -35,5 +37,29 @@ class ViewsController @Inject()(
           ResponseError[String](e.getMessage.toInt, s"${messageError.message}")
         )
     }
+  }
+
+  def insertFromView2: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestInsertFromView2].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val movementsList = movementRequest.toMovimientosModels
+        val response = movimiento.saveMovimientosFromView2(movementsList)
+        response map {
+          case Success(_) =>
+            JsonOk(Response[String](ResponseCodes.SUCCESS, "success", s"${movementsList.length} documentos grabados"))
+          case Failure(ex) =>
+            logger.error(s"error agregando movmimentos: $ex")
+            JsonOk(Response[String](ResponseCodes.GENERIC_ERROR, "error", "No se pudieron agregar los documentos"))
+        }
+      }
+    )
+
   }
 }
