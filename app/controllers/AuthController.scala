@@ -40,8 +40,8 @@ class AuthController @Inject()(
             JsonOk(
               Response[ResponseLogin](ResponseCodes.SUCCESS,"success",
                 ResponseLogin(users.id, users.usuario, token, users.estado, users.rolId,
-                  users.nombre, users.apellido, users.telefono, Option(convertToString(users.fechaCreacion.get)),
-                  Option(convertToString(users.fechaModificacion.get))))
+                  users.nombre, users.apellido, users.telefono, Option(convertToString(users.fechaCreacion)),
+                  Option(convertToString(users.fechaModificacion))))
             )
           case Failure(e)=>
             val messageError = Constants.get(e.getMessage.toInt)

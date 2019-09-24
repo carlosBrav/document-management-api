@@ -11,6 +11,7 @@ POST          /api/login                                  controllers.AuthContro
 GET           /api/view2                                  controllers.ViewsController.loadView2
 
 #MOVEMENTS
+GET           /api/movements/load/:officeId               controllers.UsersController.loadMovements(officeId)
 POST          /api/movements/save                         controllers.ViewsController.insertFromView2
 
 GET           /                                           controllers.HomeController.index(path = "home")

@@ -110,9 +110,14 @@ object Constants {
     } yield errorSeq
   }
 
-  def convertToString(ts: Timestamp):String = {
-    val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-    df.format(ts)
+  def convertToString(ts: Option[Timestamp]):String = {
+    val time = ts.getOrElse("")
+    if(time == ""){
+      ""
+    }else{
+      val df:SimpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+      df.format(time)
+    }
   }
 
   def convertToDate(s: String): Date = {

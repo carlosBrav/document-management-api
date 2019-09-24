@@ -1,11 +1,7 @@
 package helpers
 
-import java.sql.Timestamp
-
-
-import play.api.libs.json.{Format, Json, OFormat, OWrites, Reads, __}
+import play.api.libs.json.{Json, OFormat}
 import models.{Movimientos, Vista1, Vista2}
-import repositories.MovimientosRepository
 import utils.Constants._
 import utils.UniqueId
 import java.util.Date
@@ -57,7 +53,7 @@ object ViewsControllerHelper {
       Option(""),Option(""),"",""))
 
     ResponseView2(view2.tramNum, view2.moviNum, view2.moviOrigen,view2.depeCod,view2.moviDestino,view2.destCod,
-      Option(convertToString(view2.moviFecEnv.get)), Option(""),view2.indiNombre,
+      Option(convertToString(view2.moviFecEnv)), Option(""),view2.indiNombre,
     view2.indiCod,view2.moviObs,view2.estaNombre, vista1Value.docuNombre, vista1Value.docuNum, vista1Value.docuSiglas,
       vista1Value.docuAnio)
   }
