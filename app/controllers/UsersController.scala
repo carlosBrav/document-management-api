@@ -37,7 +37,7 @@ class UsersController @Inject()(
       }
   }
 
-  def updateFechaIng: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def updateDocumentConfirm: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[RequestUpdateMovements].fold(
       invalidRequest => {
         val errors =  invalidResponseFormatter(invalidRequest)
@@ -48,7 +48,8 @@ class UsersController @Inject()(
       },
       movementRequest => {
         val response = for {
-          _ <- movimientoService.updateFechaIngMovements(movementRequest.userId, movementRequest.movementsIds)
+          _ <- movimientoService.updateFechaIngMovements(movementRequest.userId,
+            movementRequest.movementsIds, movementRequest.currentDate, movementRequest.asignadoA)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movementsIds.length} documentos grabados")
         )
@@ -61,4 +62,28 @@ class UsersController @Inject()(
     )
   }
 
+  def deriveDocument(userId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestDeriveMovements].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val newMovements = movementRequest.toMovementsModel
+        val response = for {
+          _ <- movimientoService.saveMovements(newMovements)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos grabados")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
+          )
+        }
+      }
+    )
+  }
 }
