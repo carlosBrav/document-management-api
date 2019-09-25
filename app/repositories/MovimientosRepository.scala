@@ -8,6 +8,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import models.{MovimientoTable, Movimientos}
 import slick.jdbc.MySQLProfile.api._
 import slick.lifted.TableQuery
+import utils.Constants._
 
 
 @Singleton
@@ -23,9 +24,9 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider)
     filter(x => x.dependenciasId1 === officeId)
   }
 
-  def updateFechaIng(documentsIds: Seq[String], userId: String) = {
+  def updateFechaIng(documentsIds: Seq[String], userId: String, currentDate: String, asignadoA: String) = {
     db.run(query.filter(x => x.id.inSet(documentsIds))
-      .map( x => (x.fechaIngreso, x.fechaModificacion, x.usuarioId))
-      .update((new java.sql.Timestamp(new Date().getTime), new java.sql.Timestamp(new Date().getTime), userId)))
+      .map( x => (x.fechaIngreso, x.fechaModificacion, x.usuarioId, x.asignadoA))
+      .update((new java.sql.Timestamp(convertToDate(currentDate).getTime), new java.sql.Timestamp(new Date().getTime), userId, asignadoA)))
 }
 }

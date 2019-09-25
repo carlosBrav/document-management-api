@@ -15,7 +15,7 @@ class MovimientoService @Inject()(
                                  )
   extends BaseEntityService[MovimientoTable, Movimientos, MovimientosRepository] {
 
-  def saveMovimientosFromView2(movimientos: Seq[Movimientos]) ={
+  def saveMovements(movimientos: Seq[Movimientos]) ={
     repository.db.run(repository.saveListQuery(movimientos).transactionally.asTry)
   }
 
@@ -24,8 +24,8 @@ class MovimientoService @Inject()(
     result
   }
 
-  def updateFechaIngMovements(userId: String, idsMovements: Seq[String]): Future[Int] = {
-    repository.updateFechaIng(idsMovements, userId)
+  def updateFechaIngMovements(userId: String, idsMovements: Seq[String], currentDate: String, asignadoA: String): Future[Int] = {
+    repository.updateFechaIng(idsMovements, userId, currentDate, asignadoA)
   }
 
 }

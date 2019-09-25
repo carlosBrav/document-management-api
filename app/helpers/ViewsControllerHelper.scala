@@ -64,8 +64,8 @@ object ViewsControllerHelper {
 
       val movementModel = movimientos.map(movElement => {
         val movementId = UniqueId.generateId
-        val elementModel = Movimientos(Some(movementId),movElement.movimiento,movElement.numTram,movElement.estadoDocumento.get,true,Some(""),movElement.dependenciaId1.get,
-          movElement.dependenciaId2.get,Some(""),userId,None,None,Some(new java.sql.Timestamp(convertToDate(movElement.fechaEnvio.get).getTime)),movElement.observacion,movElement.indiNombre,movElement.indiCod,
+        val elementModel = Movimientos(Some(movementId),movElement.movimiento,movElement.numTram,movElement.estadoDocumento.get,Some(""),movElement.dependenciaId1.get,
+          movElement.dependenciaId2.get,Some(""),userId,None,Some(new java.sql.Timestamp(convertToDate(movElement.fechaEnvio.get).getTime)),movElement.observacion,movElement.indiNombre,movElement.indiCod,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
 
         elementModel

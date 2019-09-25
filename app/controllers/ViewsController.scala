@@ -50,7 +50,7 @@ class ViewsController @Inject()(
       },
       movementRequest => {
         val movementsList = movementRequest.toMovimientosModels
-        val response = movimiento.saveMovimientosFromView2(movementsList)
+        val response = movimiento.saveMovements(movementsList)
         response map {
           case Success(_) =>
             JsonOk(Response[String](ResponseCodes.SUCCESS, "success", s"${movementsList.length} documentos grabados"))

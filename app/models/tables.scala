@@ -38,22 +38,20 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
   def movimiento= column[Int]("MOVIMIENTO")
   def numTram= column[String]("NUM_TRAM")
   def estadoDocumento= column[String]("ESTADO_DOCUMENTO")
-  def estadoConfirmacion= column[Boolean]("ESTADO_CONFIRMACION")
   def documentosInternosId= column[String]("DOCUMENTOS_INTERNOS_ID")
   def dependenciasId= column[String]("DEPENDENCIAS_ID")
   def dependenciasId1= column[String]("DEPENDENCIAS_ID1")
   def asignadoA= column[String]("ASIGNADO_A")
   def usuarioId= column[String]("USUARIO_ID")
   def fechaIngreso= column[Timestamp]("FECHA_INGRESO")
-  def fechaDerivacion= column[Timestamp]("FECHA_DERIVACION")
   def indiNombre = column[String]("INDI_NOMBRE")
   def indiCod = column[String]("INDI_COD")
   def fechaEnvio= column[Timestamp]("FECHA_ENVIO")
   def observacion= column[String]("OBSERVACION")
 
   def * =
-    (id.?,movimiento.?,numTram.?,estadoDocumento,estadoConfirmacion,documentosInternosId.?,dependenciasId,dependenciasId1,
-      asignadoA.?,usuarioId,fechaIngreso.?,fechaDerivacion.?,fechaEnvio.?,observacion.?,indiCod.?, indiNombre.?,
+    (id.?,movimiento.?,numTram.?,estadoDocumento,documentosInternosId.?,dependenciasId,dependenciasId1,
+      asignadoA.?,usuarioId,fechaIngreso.?,fechaEnvio.?,observacion.?,indiCod.?, indiNombre.?,
       fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
 }
