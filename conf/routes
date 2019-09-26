@@ -12,7 +12,7 @@ GET           /api/view2                                  controllers.ViewsContr
 
 #MOVEMENTS
 GET           /api/movements/load/:officeId               controllers.UsersController.loadMovements(officeId)
-POST          /api/movements/confirm/:userId              controllers.UsersController.updateDocumentConfirm
+POST          /api/movements/confirm                      controllers.UsersController.updateDocumentConfirm
 POST          /api/movements/save                         controllers.ViewsController.insertFromView2
 
 
