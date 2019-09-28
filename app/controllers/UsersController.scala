@@ -3,13 +3,13 @@ package controllers
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import services.{MovimientoService, UserService}
-
+import services.{MovimientoService, UserService, DocumentService}
+import models.DocumentosInternos
 import scala.util.{Failure, Success}
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Constants._
 import utils.Constants.Implicits._
-import helpers.UsersControllerHelper._
+import helpers.MovementsControllerHelper._
 import play.api.libs.json.{JsValue, Json}
 import utils._
 
@@ -17,6 +17,7 @@ import utils._
 class UsersController @Inject()(
                                userService: UserService,
                                movimientoService: MovimientoService,
+                               documentService: DocumentService,
                                cc: ControllerComponents
                                )extends AbstractController(cc){
 
@@ -77,6 +78,45 @@ class UsersController @Inject()(
           _ <- movimientoService.saveMovements(newMovements)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos grabados")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
+          )
+        }
+      }
+    )
+  }
+
+  def getCorrelativeMax(officeId: String, tipoDocuId: String): Action[AnyContent] = Action.async { implicit request =>
+    documentService.getMaxCorrelative(officeId,tipoDocuId)
+      .map(document =>
+      JsonOk(
+        Response[DocumentosInternos](ResponseCodes.SUCCESS, "success", document)
+      ))
+      .recover {
+        case ex =>
+          logger.error(s"error obteniendo max correlativo: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error alobtener max correlativo"))
+      }
+  }
+
+  def generateResponseToMovements(userId: String, officeId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestResponseToMovements].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val (newDocumentIntern, newMovement) = movementRequest.toMovementModel(userId,officeId)
+        val response = for {
+          _ <- userService.generateResponseToMovement(newDocumentIntern, newMovement)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")
         )
         response recover {
           case _ => JsonOk(

@@ -82,8 +82,11 @@ CREATE TABLE IF NOT EXISTS DOCUMENTOS_INTERNOS (
   `Tipo_docu_id` varchar(45) NOT NULL,
   `num_documento` varchar(45) NOT NULL,
   `siglas` VARCHAR(12) NOT NULL,
+  `anio` varchar(12) NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `asunto` varchar(450) NULL,
+  `dependencia_id` varchar(25) NOT NULL,
   PRIMARY KEY (`id`),
   INDEX `fk_Documentos_internos_TIPO_DOCU1_idx` (`Tipo_docu_id` ASC)
   )

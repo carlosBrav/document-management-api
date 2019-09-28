@@ -1,10 +1,11 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import models.{Usuario, UsuarioTable}
-import repositories.UserRepository
+import models.{DocumentosInternos, Movimientos, Usuario, UsuarioTable}
+import repositories.{DocumentsInternRepository, MovimientosRepository, UserRepository}
 import utils.ResponseCodes
 import slick.jdbc.MySQLProfile.api._
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
 import scala.util.{Failure, Try}
@@ -14,7 +15,9 @@ import play.api.Logger
 
 @Singleton
 class UserService @Inject()(
-                             override val repository: UserRepository
+                             override val repository: UserRepository,
+                             documentInternsRepository: DocumentsInternRepository,
+                             movimientosRepository: MovimientosRepository
                            )
   extends BaseEntityService[UsuarioTable, Usuario, UserRepository]{
 
@@ -43,5 +46,12 @@ class UserService @Inject()(
         Failure(new Exception(s"${ResponseCodes.USER_NOT_FOUND}"))
     }
     userLogin
+  }
+
+  def generateResponseToMovement(newDocumentIntern: DocumentosInternos, newMovement: Movimientos ): Future[Try[Int]] = {
+    repository.db.run(
+      (documentInternsRepository.saveQuery(newDocumentIntern) andThen movimientosRepository.saveQuery(newMovement))
+        .transactionally.asTry
+    )
   }
 }

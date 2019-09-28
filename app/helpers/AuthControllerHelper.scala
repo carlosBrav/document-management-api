@@ -28,4 +28,16 @@ object AuthControllerHelper {
                           )
   implicit val responseLogInFormat: OFormat[ResponseLogin] = Json.format[ResponseLogin]
 
+  case class RequestUpdateUser(
+                              id: Option[String],
+                              usuario: String,
+                              token: String,
+                              estado: Boolean,
+                              rolId: String,
+                              nombre: String,
+                              apellido: String,
+                              telefono: Option[String]
+                              )
+  implicit val requestUpdateUser: OFormat[RequestUpdateUser] = Json.format[RequestUpdateUser]
+
 }

@@ -28,4 +28,5 @@ class MovimientoService @Inject()(
     repository.updateFechaIng(idsMovements, userId, currentDate, asignadoA)
   }
 
+
 }

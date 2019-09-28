@@ -52,4 +52,7 @@ class AuthController @Inject()(
       }
     )
   }
+
+  def updateUser: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  }
 }
