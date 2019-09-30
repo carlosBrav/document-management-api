@@ -29,7 +29,6 @@ object AuthControllerHelper {
   implicit val responseLogInFormat: OFormat[ResponseLogin] = Json.format[ResponseLogin]
 
   case class RequestUpdateUser(
-                              id: Option[String],
                               usuario: String,
                               token: String,
                               estado: Boolean,
@@ -40,4 +39,11 @@ object AuthControllerHelper {
                               )
   implicit val requestUpdateUser: OFormat[RequestUpdateUser] = Json.format[RequestUpdateUser]
 
+  case class RequestChangePassword(
+                                  oldPassword: String,
+                                  newPassword: String
+                                  )
+  implicit val requestChangePasswordFormat: OFormat[RequestChangePassword] = Json.format[RequestChangePassword]
+
+  case class PasswordNotMatchedException(message: String) extends Exception
 }

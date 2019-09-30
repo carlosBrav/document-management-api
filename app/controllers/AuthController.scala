@@ -8,6 +8,7 @@ import services.UserService
 import utils.Constants._
 import utils.Constants.Implicits._
 import utils._
+import utils.BCryptPass._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.{Failure, Success}
@@ -53,6 +54,37 @@ class AuthController @Inject()(
     )
   }
 
-  def updateUser: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def changePassword(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestChangePassword].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      userRequest => {
+        val result = for {
+          Success(userDB) <- userService.loadById(id)
+          _ <- if(validateHashPass(userRequest.oldPassword, userRequest.newPassword)){
+           val newUser = userDB.copy(password = createHashPass(userRequest.newPassword))
+            Future(userService.updateById(id,newUser))
+          }else{
+          Future.failed(PasswordNotMatchedException("Contraseña invalida"))
+          }
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success", s"Se ha actualizado correctamente la contraseña")
+        )
+        result recover {
+          case e: PasswordNotMatchedException =>
+            JsonOk(
+              ResponseError[String](ResponseCodes.PASSWORD_NOT_MATCH, e.getMessage)
+            )
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar actualizar la contraseña")
+          )
+        }
+      }
+    )
   }
 }

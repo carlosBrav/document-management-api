@@ -2,23 +2,24 @@ package controllers
 
 import javax.inject.Inject
 import play.api.Logger
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import services.{MovimientoService, UserService, DocumentService}
+import play.api.mvc._
+import services.{DocumentInternService, MovimientoService, UserService}
 import models.DocumentosInternos
-import scala.util.{Failure, Success}
+
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Constants._
 import utils.Constants.Implicits._
 import helpers.MovementsControllerHelper._
 import play.api.libs.json.{JsValue, Json}
 import utils._
+import scala.util.{Failure, Success}
 
 
 class UsersController @Inject()(
-                               userService: UserService,
-                               movimientoService: MovimientoService,
-                               documentService: DocumentService,
-                               cc: ControllerComponents
+                                 userService: UserService,
+                                 movimientoService: MovimientoService,
+                                 documentService: DocumentInternService,
+                                 cc: ControllerComponents
                                )extends AbstractController(cc){
 
   implicit val ec: ExecutionContext = defaultExecutionContext
@@ -92,7 +93,7 @@ class UsersController @Inject()(
     documentService.getMaxCorrelative(officeId,tipoDocuId)
       .map(document =>
       JsonOk(
-        Response[DocumentosInternos](ResponseCodes.SUCCESS, "success", document)
+        Response[String](ResponseCodes.SUCCESS, "success", s"${document.numDocumento}")
       ))
       .recover {
         case ex =>
@@ -113,7 +114,7 @@ class UsersController @Inject()(
       movementRequest => {
         val (newDocumentIntern, newMovement) = movementRequest.toMovementModel(userId,officeId)
         val response = for {
-          _ <- userService.generateResponseToMovement(newDocumentIntern, newMovement)
+          _ <- documentService.generateResponseToMovement(newDocumentIntern, newMovement)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
             s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")
@@ -125,5 +126,32 @@ class UsersController @Inject()(
         }
       }
     )
+  }
+
+  def deleteDocumentIntern(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    val result: Future[Result] = for {
+      Success(document) <- documentService.loadById(documentId)
+      _ <- Future.successful(documentService.updateById(documentId, document.copy(active = false)))
+    } yield JsonOk(
+      Response[String](ResponseCodes.SUCCESS, "Success", s"Documento ${document.id.get} eliminado")
+    )
+    result recover {
+      case _ => JsonOk(
+        ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al eliminar documento interno")
+      )
+    }
+  }
+
+  def deleteMovement(movementId: String) : Action[JsValue] = Action.async(parse.json) { implicit request =>
+    val result = for {
+      _ <- movimientoService.deleteMovement(movementId)
+    } yield JsonOk(
+      Response[String](ResponseCodes.SUCCESS, "Success", s"Movimiento eliminado con id: $movementId")
+    )
+    result recover {
+      case _ => JsonOk(
+        ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al eliminar el movimiento")
+      )
+    }
   }
 }

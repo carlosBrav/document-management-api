@@ -62,13 +62,15 @@ case class TipoDocumento(id: Option[String],
                         ) extends BaseEntity
 
 case class DocumentosInternos(id: Option[String],
-                              estado: Boolean,
+                              estado: Option[String],
                               tipoDocuId: String,
                               numDocumento: Option[Int],
                               siglas: Option[String],
                               anio: Option[String],
                               asunto: Option[String],
+                              observacion: Option[String],
                               dependenciaId: String,
+                              active: Boolean,
                               fechaCreacion: Option[Timestamp],
                               fechaModificacion: Option[Timestamp],
                              ) extends BaseEntity

@@ -21,6 +21,7 @@ object ResponseCodes {
   val USER_DISABLED = 102
   val DUPLICATED_INFO = 405
   val USUARIO_INACTIVO = 101
+  val PASSWORD_NOT_MATCH = 103
 }
 
 object Format {

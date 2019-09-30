@@ -48,10 +48,11 @@ class UserService @Inject()(
     userLogin
   }
 
-  def generateResponseToMovement(newDocumentIntern: DocumentosInternos, newMovement: Movimientos ): Future[Try[Int]] = {
-    repository.db.run(
-      (documentInternsRepository.saveQuery(newDocumentIntern) andThen movimientosRepository.saveQuery(newMovement))
-        .transactionally.asTry
-    )
+  def loadById(id: String) = {
+    val userResult = repository.loadById(id)
+    userResult.map {
+      case Some(user) => Try(user)
+      case None => Failure(new Exception("User not found"))
+    }
   }
 }

@@ -83,7 +83,9 @@ object MovementsControllerHelper {
         documentoInterno.siglas,
         documentoInterno.anio,
         documentoInterno.asunto,
+        documentoInterno.observacion,
         documentoInterno.dependenciaId,
+        documentoInterno.active,
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
@@ -92,8 +94,6 @@ object MovementsControllerHelper {
         "DERIVADO",Some(documentInternoId),movement.destinyId,officeId,Some(""), userId,None,Some(new java.sql.Timestamp(new Date().getTime)),
         movement.observacion,movement.indiNombre,movement.indiCod,
         Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
-
-
       (newDocumentIntern,newMovement)
     }
   }

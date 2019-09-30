@@ -5,6 +5,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import models.{DocumentoInternoTable, DocumentosInternos}
 import slick.lifted.TableQuery
 import slick.jdbc.MySQLProfile.api._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class DocumentsInternRepository @Inject()(dbConfigProvider: DatabaseConfigProvider)

@@ -76,15 +76,17 @@ class TipoDocumentoTable(tag: Tag) extends BaseEntityTable[TipoDocumento](tag,"T
 }
 
 class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos](tag,"DOCUMENTOS_INTERNOS") {
-  def estado =column[Boolean]("ESTADO")
+  def estado =column[String]("ESTADO")
   def tipoDocuId = column[String]("TIPO_DOCU_ID")
   def numDocumento = column[Int]("NUM_DOCUMENTO")
   def siglas = column[String]("SIGLAS")
   def anio = column[String]("ANIO")
   def asunto = column[String]("ASUNTO")
+  def observacion = column[String]("OBSERVACION")
   def dependenciaId = column[String]("DEPENDENCIA_ID")
+  def active = column[Boolean]("ACTIVE")
 
-  def * = (id.?, estado, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?,dependenciaId,
+  def * = (id.?, estado.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,dependenciaId,active,
     fechaCreacion.?, fechaModificacion.?) <>
     (DocumentosInternos.tupled, DocumentosInternos.unapply)
 }
