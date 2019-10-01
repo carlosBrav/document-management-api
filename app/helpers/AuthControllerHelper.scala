@@ -7,9 +7,9 @@ import java.sql.Timestamp
 
 object AuthControllerHelper {
 
-  case class RequestLogin(usuario: String, password: String)
+  case class RequestLogin(user: String, password: String)
   val requestLoginReads: Reads[RequestLogin] = (
-    emptyStringFieldCheck("usuario","El usuario es requerido") and
+    emptyStringFieldCheck("user","El usuario es requerido") and
       emptyStringFieldCheck("password","La contraseña es requerida")
   )(RequestLogin.apply _)
   val requestLoginWrites: OWrites[RequestLogin] = Json.writes[RequestLogin]
