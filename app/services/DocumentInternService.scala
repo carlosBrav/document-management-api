@@ -2,12 +2,12 @@ package services
 
 import javax.inject.{Inject, Singleton}
 import repositories.{DocumentsInternRepository, MovimientosRepository}
-import services.DocumentInternService
 import models.{DocumentoInternoTable, DocumentosInternos, Movimientos}
 import slick.jdbc.MySQLProfile.api._
-import scala.util.{Failure, Try}
+import scala.util.Failure
 import scala.concurrent.Future
 import scala.util.Try
+import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
 class DocumentInternService @Inject()(
@@ -34,6 +34,17 @@ class DocumentInternService @Inject()(
       .recover {
         case e: Exception => Failure(new Exception("Documento no encontrado"))
       }
+  }
+
+  def getDocumentsInternsByTipoDocuId(tipoDocuId: String) : Future[Seq[DocumentosInternos]] = {
+    val documents = repository.filter(x => x.tipoDocuId === tipoDocuId)
+    documents
+  }
+
+  def createCiculares(userId: String, officeId: String, documentIntern: DocumentosInternos, movements: Seq[Movimientos]): Future[Try[Option[Int]]] = {
+    repository.db.run(
+      (repository.saveQuery(documentIntern) andThen movementsRepository.saveListQuery(movements)).transactionally.asTry
+    )
   }
 
 }

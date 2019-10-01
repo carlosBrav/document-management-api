@@ -4,7 +4,6 @@ import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc._
 import services.{DocumentInternService, MovimientoService, UserService}
-import models.DocumentosInternos
 
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Constants._
@@ -12,7 +11,7 @@ import utils.Constants.Implicits._
 import helpers.MovementsControllerHelper._
 import play.api.libs.json.{JsValue, Json}
 import utils._
-import scala.util.{Failure, Success}
+import scala.util.Success
 
 
 class UsersController @Inject()(
