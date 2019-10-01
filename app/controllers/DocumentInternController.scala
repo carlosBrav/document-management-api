@@ -7,10 +7,11 @@ import services.DocumentInternService
 import utils.Constants._
 import utils.Constants.Implicits._
 import play.api.libs.json.{JsValue, Json}
-import scala.concurrent.ExecutionContext
+
+import scala.concurrent.{ExecutionContext, Future}
 import helpers.DocumentInternControllerHelper._
 import org.apache.commons.lang3.exception.ExceptionUtils
-import utils.ResponseCodes
+import utils.{Constants, ResponseCodes}
 
 class DocumentInternController @Inject()(
                                         documentInternService: DocumentInternService,
@@ -32,7 +33,30 @@ class DocumentInternController @Inject()(
     }
   }
 
-  def createDocumentCircular(officeId: String, userId: String): Action[JsValue] = Action.async { implicit request =>
-
+  def createDocumentCircular(officeId: String, userId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestCreateCircular].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      userRequest => {
+        val (documentIntern, movements) = userRequest.toModels(userId, officeId)
+        val response = for{
+          _ <- documentInternService.createCiculares(userId,officeId,documentIntern,movements)
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success", s"Se han creado ${movements.length} documentos circulares")
+        )
+        response recover {
+          case e =>
+            logger.error("error creando documentos circulares: " + e.getMessage)
+            JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar crear documentos circulares")
+          )
+        }
+      }
+    )
   }
 }
