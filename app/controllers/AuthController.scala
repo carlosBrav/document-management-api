@@ -30,7 +30,7 @@ class AuthController @Inject()(
         )
       },
       userRequest => {
-        userService.processLogin(userRequest.usuario, userRequest.password) map {
+        userService.processLogin(userRequest.user, userRequest.password) map {
           case Success(users) =>
             val token = JWTUtil.createToken(Map(
               "userId" -> users.id.get,
