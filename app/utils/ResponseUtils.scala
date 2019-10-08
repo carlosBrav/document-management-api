@@ -46,6 +46,8 @@ object Constants {
     ResponseCodes.SUCCESS -> CustomResponseException(ResponseCodes.SUCCESS, "success"),
     ResponseCodes.MISSING_FIELDS -> CustomResponseException(ResponseCodes.MISSING_FIELDS, "missing required parameter"),
     ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario."),
+    ResponseCodes.UNAUTHORIZED -> CustomResponseException(ResponseCodes.UNAUTHORIZED, "Contraseña incorrecta. Inténtelo de nuevo"),
+    ResponseCodes.USUARIO_INACTIVO -> CustomResponseException(ResponseCodes.USUARIO_INACTIVO, "Usuario inactivo. Comunicarse con el administrador")
   )
 
   def get(code: Int): CustomResponseException = errorsMap.getOrElse(code,genericError)
