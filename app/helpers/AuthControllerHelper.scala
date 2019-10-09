@@ -20,6 +20,7 @@ object AuthControllerHelper {
                            token: String,
                            estado: Boolean,
                            rolId: String,
+                           rolName: String,
                            nombre: String,
                            apellido: String,
                            telefono: Option[String],

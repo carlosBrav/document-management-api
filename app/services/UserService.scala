@@ -23,27 +23,30 @@ class UserService @Inject()(
 
   val logger = Logger(this.getClass)
 
-  def processLogin(usuario: String, password: String): Future[Try[Usuario]] = {
-    val userFilterByUsuario = repository.filter(_.usuario === usuario)
-
+  def processLogin(usuario: String, password: String) = {
     val userLogin = {
       for {
-        userResult <- userFilterByUsuario.map(_.head)
+        userResult <- repository.loadByUserName(usuario)
       } yield {
-        if(userResult.estado){
-          if (validateHashPass(password, userResult.password)) {
-            Try(userResult)
+        if(userResult.isDefined){
+          val user = userResult.get._1
+          if(user.estado){
+            if (validateHashPass(password, user.password)) {
+              Try(userResult.get)
+            }
+            else
+              Failure(new Exception(s"${ResponseCodes.UNAUTHORIZED}"))
+          }else{
+            Failure(new Exception(s"${ResponseCodes.INACTIVE_USER}"))
           }
-          else
-            Failure(new Exception(s"${ResponseCodes.UNAUTHORIZED}"))
         }else{
-          Failure(new Exception(s"${ResponseCodes.USUARIO_INACTIVO}"))
+          Failure(new Exception(s"${ResponseCodes.USER_NOT_FOUND}"))
         }
       }
     } recover{
       case e: Exception =>
         logger.error(s"Error login: $e")
-        Failure(new Exception(s"${ResponseCodes.USER_NOT_FOUND}"))
+        Failure(new Exception(s"${ResponseCodes.GENERIC_ERROR}"))
     }
     userLogin
   }

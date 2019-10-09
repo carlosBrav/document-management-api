@@ -20,7 +20,7 @@ object ResponseCodes {
   val FORBIDDEN  = 403
   val USER_DISABLED = 102
   val DUPLICATED_INFO = 405
-  val USUARIO_INACTIVO = 101
+  val INACTIVE_USER = 101
   val PASSWORD_NOT_MATCH = 103
 }
 
@@ -47,7 +47,7 @@ object Constants {
     ResponseCodes.MISSING_FIELDS -> CustomResponseException(ResponseCodes.MISSING_FIELDS, "missing required parameter"),
     ResponseCodes.USER_NOT_FOUND -> CustomResponseException(ResponseCodes.USER_NOT_FOUND, "No se ha encontrado al usuario."),
     ResponseCodes.UNAUTHORIZED -> CustomResponseException(ResponseCodes.UNAUTHORIZED, "Contraseña incorrecta. Inténtelo de nuevo"),
-    ResponseCodes.USUARIO_INACTIVO -> CustomResponseException(ResponseCodes.USUARIO_INACTIVO, "Usuario inactivo. Comunicarse con el administrador")
+    ResponseCodes.INACTIVE_USER -> CustomResponseException(ResponseCodes.INACTIVE_USER, "Usuario inactivo. Comunicarse con el administrador")
   )
 
   def get(code: Int): CustomResponseException = errorsMap.getOrElse(code,genericError)
