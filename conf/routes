@@ -15,6 +15,8 @@ GET           /api/movements/load/:officeId               controllers.UsersContr
 POST          /api/movements/confirm                      controllers.UsersController.updateDocumentConfirm
 POST          /api/movements/save                         controllers.ViewsController.insertFromView2
 
+#INITIAL
+GET            /api/initialState                          controllers.HomeController.initialState
 
 GET           /                                           controllers.HomeController.index(path = "home")
 GET           /*path                                      controllers.HomeController.index(path)
