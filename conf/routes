@@ -12,8 +12,8 @@ GET           /api/view2                                  controllers.ViewsContr
 
 #MOVEMENTS
 GET           /api/movements/load/:officeId               controllers.UsersController.loadMovements(officeId)
-POST          /api/movements/confirm                      controllers.UsersController.updateDocumentConfirm
-POST          /api/movements/save                         controllers.ViewsController.insertFromView2
+PUT           /api/movements                              controllers.UsersController.updateDocumentConfirm
+POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 
 #INITIAL
 GET            /api/initialState                          controllers.HomeController.initialState

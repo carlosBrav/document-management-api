@@ -3,7 +3,6 @@ package helpers
 import play.api.libs.functional.syntax._
 import utils.RequestUtils._
 import play.api.libs.json.{Format, Json, OFormat, OWrites, Reads, __}
-import java.sql.Timestamp
 
 object AuthControllerHelper {
 

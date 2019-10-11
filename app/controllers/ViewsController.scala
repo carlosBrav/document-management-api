@@ -39,7 +39,7 @@ class ViewsController @Inject()(
     }
   }
 
-  def insertFromView2: Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def insertFromView2(userId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[RequestInsertFromView2].fold(
       invalidRequest => {
         val errors =  invalidResponseFormatter(invalidRequest)
@@ -49,11 +49,11 @@ class ViewsController @Inject()(
         )
       },
       movementRequest => {
-        val movementsList = movementRequest.toMovimientosModels
+        val movementsList = movementRequest.toMovimientosModels(userId)
         val response = movimiento.saveMovements(movementsList)
         response map {
           case Success(_) =>
-            JsonOk(Response[String](ResponseCodes.SUCCESS, "success", s"${movementsList.length} documentos grabados"))
+            JsonOk(Response[String](ResponseCodes.SUCCESS, "success", s"${movementsList.length} documentos confirmados"))
           case Failure(ex) =>
             logger.error(s"error agregando movmimentos: $ex")
             JsonOk(Response[String](ResponseCodes.GENERIC_ERROR, "error", "No se pudieron agregar los documentos"))

@@ -26,19 +26,19 @@ object ViewsControllerHelper {
                            docuAnio: String
                            )
 
-  case class MovimientoRequest(numTram: Option[String],
-                               movimiento: Option[Int],
+  case class MovimientoRequest(tramNum: Option[String],
+                               moviNum: Option[Int],
                                usuarioId: Option[String],
-                               observacion: Option[String],
-                               estadoDocumento: Option[String],
+                               moviObs: Option[String],
+                               estaNombre: Option[String],
                                documentoInternoId: Option[String],
-                               dependenciaId1: Option[String],
-                               dependenciaId2: Option[String],
+                               depeCod: Option[String],
+                               destCod: Option[String],
                                asignadoA: Option[String],
                                indiCod: Option[String],
                                indiNombre: Option[String],
-                               fechaEnvio: Option[String],
-                               fechaIngreso: Option[String])
+                               moviFecEnv: Option[String],
+                               moviFecIng: Option[String])
 
   implicit val movimientoRequestFormat: OFormat[MovimientoRequest] = Json.format[MovimientoRequest]
 
@@ -58,14 +58,18 @@ object ViewsControllerHelper {
       vista1Value.docuAnio)
   }
 
-  case class RequestInsertFromView2(movimientos: Seq[MovimientoRequest], userId: String) {
+  case class RequestInsertFromView2(movements: Seq[MovimientoRequest]) {
 
-    def toMovimientosModels: Seq[Movimientos] = {
+    def toMovimientosModels(userId: String): Seq[Movimientos] = {
 
-      val movementModel = movimientos.map(movElement => {
+      val movementModel = movements.map(movElement => {
         val movementId = UniqueId.generateId
-        val elementModel = Movimientos(Some(movementId),movElement.movimiento,movElement.numTram,movElement.estadoDocumento.get,Some(""),movElement.dependenciaId1.get,
-          movElement.dependenciaId2.get,Some(""),userId,None,Some(new java.sql.Timestamp(convertToDate(movElement.fechaEnvio.get).getTime)),movElement.observacion,movElement.indiNombre,movElement.indiCod,
+        val elementModel = Movimientos(Some(movementId),movElement.moviNum,movElement.tramNum,movElement.estaNombre.get,Some(""),
+          movElement.depeCod.get,
+          movElement.destCod.get,Some(""),
+          userId,None,
+          Some(new java.sql.Timestamp(convertToDate(movElement.moviFecEnv.get).getTime)),
+          movElement.moviObs,movElement.indiNombre,movElement.indiCod,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
 
         elementModel
