@@ -78,7 +78,7 @@ object DocumentInternControllerHelper {
         val movementId = UniqueId.generateId
         val newMovement = Movimientos(Some(movementId), Some(move.movimiento.get), move.numTram,
           "DERIVADO", Some(documentInternoId), move.destinyId, officeId, Some(""), userId, None, Some(new java.sql.Timestamp(new Date().getTime)),
-          move.observacion, move.indiNombre, move.indiCod,
+          move.observacion, move.indiNombre, move.indiCod, move.docuNombre,move.docuNum,move.docuSiglas, move.docuAnio,
           Some(new java.sql.Timestamp(new Date().getTime)), Some(new java.sql.Timestamp(new Date().getTime)))
         newMovement
       })

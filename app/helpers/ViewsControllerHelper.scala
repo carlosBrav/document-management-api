@@ -37,6 +37,10 @@ object ViewsControllerHelper {
                                asignadoA: Option[String],
                                indiCod: Option[String],
                                indiNombre: Option[String],
+                               docuNombre: Option[String],
+                               docuNum: Option[String],
+                               docuSiglas: Option[String],
+                               docuAnio: Option[String],
                                moviFecEnv: Option[String],
                                moviFecIng: Option[String])
 
@@ -69,7 +73,10 @@ object ViewsControllerHelper {
           movElement.destCod.get,Some(""),
           userId,None,
           Some(new java.sql.Timestamp(convertToDate(movElement.moviFecEnv.get).getTime)),
-          movElement.moviObs,movElement.indiNombre,movElement.indiCod,
+          movElement.moviObs,
+          movElement.indiNombre,
+          movElement.indiCod,
+          movElement.docuNombre,movElement.docuNum,movElement.docuSiglas, movElement.docuAnio,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
 
         elementModel

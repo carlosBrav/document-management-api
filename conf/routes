@@ -15,6 +15,7 @@ GET           /api/movements/office/:officeId           controllers.UsersControl
 GET           /api/movements/numTram/:numTram           controllers.UsersController.loadMovementsByTramNum(numTram)
 GET           /api/movements/currentDate                controllers.UsersController.loadMovementsByCurrentDate
 PUT           /api/movements                            controllers.UsersController.updateDocumentConfirm
+DELETE        /api/movements/:id                        controllers.UsersController.deleteMovement(id)
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 
 #INITIAL

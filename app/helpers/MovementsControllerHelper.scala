@@ -25,7 +25,11 @@ object MovementsControllerHelper {
                                     fechaEnvio: Option[String],
                                     observacion: Option[String],
                                     indiNombre: Option[String],
-                                    indiCod: Option[String])
+                                    indiCod: Option[String],
+                                    docuNombre: Option[String],
+                                    docuNum: Option[String],
+                                    docuSiglas: Option[String],
+                                    docuAnio: Option[String])
 
   implicit val responseModelMovementsFormat: OFormat[ResponseModelMovements] = Json.format[ResponseModelMovements]
 
@@ -47,7 +51,11 @@ object MovementsControllerHelper {
       Option(convertToString(movimiento.fechaIngreso)),
       Option(convertToString(movimiento.fechaEnvio)),
       movimiento.observacion,movimiento.indiNombre,
-      movimiento.indiCod)
+      movimiento.indiCod,
+      movimiento.docuNombre,
+      movimiento.docuNum,
+      movimiento.docuSiglas,
+      movimiento.docuAnio)
     response
   }
 
@@ -63,7 +71,11 @@ object MovementsControllerHelper {
                                fechaEnvio: Option[String],
                                observacion: Option[String],
                                indiNombre: Option[String],
-                               indiCod: Option[String])
+                               indiCod: Option[String],
+                               docuNombre: Option[String],
+                               docuNum: Option[String],
+                               docuSiglas: Option[String],
+                               docuAnio: Option[String])
 
   implicit val requestMovementsFormat: OFormat[RequestMovements] = Json.format[RequestMovements]
 
@@ -74,6 +86,7 @@ object MovementsControllerHelper {
         val movementId = UniqueId.generateId
         val movement = Movimientos(Some(movementId),Some(move.movimiento.get +1),move.numTram,"DERIVADO",Some(""),move.destinyId,officeId,Some(""),
           userId,None,Some(new java.sql.Timestamp(new Date().getTime)),move.observacion,move.indiNombre,move.indiCod,
+          move.docuNombre, move.docuNum, move.docuSiglas, move.docuAnio,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
         movement
       })
@@ -106,7 +119,7 @@ object MovementsControllerHelper {
       val movementId = UniqueId.generateId
       val newMovement = Movimientos(Some(movementId),Some(movement.movimiento.get +1),movement.numTram,
         "DERIVADO",Some(documentInternoId),movement.destinyId,officeId,Some(""), userId,None,Some(new java.sql.Timestamp(new Date().getTime)),
-        movement.observacion,movement.indiNombre,movement.indiCod,
+        movement.observacion,movement.indiNombre,movement.indiCod, movement.docuNombre,movement.docuNum,movement.docuSiglas, movement.docuAnio,
         Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
       (newDocumentIntern,newMovement)
     }

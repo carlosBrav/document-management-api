@@ -24,6 +24,7 @@ class UsersController @Inject()(
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
 
+
   def loadMovementsByOffice(officeId: String): Action[AnyContent] = Action.async { implicit request =>
 
     movimientoService.loadMovementsByOffice(officeId)
