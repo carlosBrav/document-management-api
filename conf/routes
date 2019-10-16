@@ -5,21 +5,23 @@
 
 # An example controller showing a sample home page
 #LOGIN
-POST          /api/login                                  controllers.AuthController.login
+POST          /api/login                                controllers.AuthController.login
 
 #VIEWS
-GET           /api/view2                                  controllers.ViewsController.loadView2
+GET           /api/view2                                controllers.ViewsController.loadView2
 
 #MOVEMENTS
-GET           /api/movements/load/:officeId               controllers.UsersController.loadMovements(officeId)
-PUT           /api/movements                              controllers.UsersController.updateDocumentConfirm
+GET           /api/movements/office/:officeId           controllers.UsersController.loadMovementsByOffice(officeId)
+GET           /api/movements/numTram/:numTram           controllers.UsersController.loadMovementsByTramNum(numTram)
+GET           /api/movements/currentDate                controllers.UsersController.loadMovementsByCurrentDate
+PUT           /api/movements                            controllers.UsersController.updateDocumentConfirm
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 
 #INITIAL
-GET            /api/initialState                          controllers.HomeController.initialState
+GET            /api/initialState                        controllers.HomeController.initialState
 
-GET           /                                           controllers.HomeController.index(path = "home")
-GET           /*path                                      controllers.HomeController.index(path)
+GET           /                                         controllers.HomeController.index(path = "home")
+GET           /*path                                    controllers.HomeController.index(path)
 
-GET           /assets/*file                               controllers.Assets.versioned(path="/public", file: Asset)
+GET           /assets/*file                             controllers.Assets.versioned(path="/public", file: Asset)
 

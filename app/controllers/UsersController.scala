@@ -24,17 +24,45 @@ class UsersController @Inject()(
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
 
-  def loadMovements(officeId: String): Action[AnyContent] = Action.async { implicit request =>
+  def loadMovementsByOffice(officeId: String): Action[AnyContent] = Action.async { implicit request =>
 
-    movimientoService.loadMovementsToOffice(officeId)
+    movimientoService.loadMovementsByOffice(officeId)
       .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move)))
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
         )
       )
       .recover {
         case ex =>
           logger.error(s"error listando movmimentos: $ex")
           JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
+      }
+  }
+
+  def loadMovementsByTramNum(numTram: String): Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadMovementsByTramNum(numTram)
+      .map(movements =>
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos"))
+      }
+  }
+
+  def loadMovementsByCurrentDate: Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadMovementsByCurrentDate
+      .map(movements =>
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos"))
       }
   }
 

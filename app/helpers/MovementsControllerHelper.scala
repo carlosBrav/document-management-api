@@ -3,7 +3,7 @@ package helpers
 import java.util.Date
 
 import helpers.DocumentInternControllerHelper.RequestModelDocumentosInternos
-import models.{DocumentosInternos, Movimientos}
+import models.{Dependencias, DocumentosInternos, Movimientos}
 import play.api.libs.json.{Json, OFormat}
 import utils.Constants.convertToString
 import utils.UniqueId
@@ -15,8 +15,10 @@ object MovementsControllerHelper {
                                     numTram: Option[String],
                                     estadoDocumento: String,
                                     documentosInternosId: Option[String],
-                                    dependenciasId: String,
-                                    dependenciasId1: String,
+                                    dependenciasId: Option[String],
+                                    origenNombre: Option[String],
+                                    dependenciasId1: Option[String],
+                                    destinoNombre: Option[String],
                                     asignadoA: Option[String],
                                     usuarioId: String,
                                     fechaIngreso: Option[String],
@@ -30,10 +32,22 @@ object MovementsControllerHelper {
   case class ResponseMovements(responseCode: Int, responseMessage: String, data: Seq[ResponseModelMovements])
   implicit val responseMovementsFormat: OFormat[ResponseMovements] = Json.format[ResponseMovements]
 
-  def toResponseMovements(movimiento: Movimientos) : ResponseModelMovements ={
-    val response = ResponseModelMovements(movimiento.id,movimiento.movimiento,movimiento.numTram,movimiento.estadoDocumento,movimiento.documentosInternosId,movimiento.dependenciasId,
-      movimiento.dependenciasId1,movimiento.asignadoA,movimiento.usuarioId,
-      Option(convertToString(movimiento.fechaIngreso)),Option(convertToString(movimiento.fechaEnvio)),movimiento.observacion,movimiento.indiNombre,movimiento.indiCod)
+  def toResponseMovements(movimiento: Movimientos, dependencyOrigin: Option[Dependencias], dependencyDestiny: Option[Dependencias]) : ResponseModelMovements ={
+    val response = ResponseModelMovements(movimiento.id,
+      movimiento.movimiento,
+      movimiento.numTram,
+      movimiento.estadoDocumento,
+      movimiento.documentosInternosId,
+      Some(movimiento.dependenciasId),
+      Some(dependencyOrigin.get.nombre),
+      Some(movimiento.dependenciasId1),
+      Some(dependencyDestiny.get.nombre),
+      movimiento.asignadoA,
+      movimiento.usuarioId,
+      Option(convertToString(movimiento.fechaIngreso)),
+      Option(convertToString(movimiento.fechaEnvio)),
+      movimiento.observacion,movimiento.indiNombre,
+      movimiento.indiCod)
     response
   }
 

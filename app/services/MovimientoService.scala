@@ -19,8 +19,18 @@ class MovimientoService @Inject()(
     repository.db.run(repository.saveListQuery(movimientos).transactionally.asTry)
   }
 
-  def loadMovementsToOffice(officeId: String): Future[Seq[Movimientos]] = {
-    val result = repository.getMovimientosByOfficeId(officeId)
+  def loadMovementsByOffice(officeId: String)= {
+    val result = repository.getMovementsByOffice(officeId)
+    result
+  }
+
+  def loadMovementsByTramNum(numTram: String) = {
+    val result = repository.getMovementsByTramNum(numTram)
+    result
+  }
+
+  def loadMovementsByCurrentDate = {
+    val result = repository.getMovementByCurrentDate
     result
   }
 
