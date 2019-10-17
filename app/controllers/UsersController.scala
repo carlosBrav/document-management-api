@@ -170,16 +170,28 @@ class UsersController @Inject()(
     }
   }
 
-  def deleteMovement(movementId: String) : Action[JsValue] = Action.async(parse.json) { implicit request =>
-    val result = for {
-      _ <- movimientoService.deleteMovement(movementId)
-    } yield JsonOk(
-      Response[String](ResponseCodes.SUCCESS, "Success", s"Movimiento eliminado con id: $movementId")
+  def deleteMovements : Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestDeleteMovements].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val response = for {
+          _ <- movimientoService.deleteMovement(movementRequest.movementsIds)
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"Se han eliminado ${movementRequest.movementsIds.length} movimientos")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar eliminar movimientos")
+          )
+        }
+      }
     )
-    result recover {
-      case _ => JsonOk(
-        ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al eliminar el movimiento")
-      )
-    }
   }
 }

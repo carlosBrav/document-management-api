@@ -38,8 +38,8 @@ class MovimientoService @Inject()(
     repository.updateFechaIng(idsMovements, userId, currentDate, asignadoA)
   }
 
-  def deleteMovement(movementId: String) = {
-    val result = deleteById(movementId)
+  def deleteMovement(movementsIds: Seq[String]) = {
+    val result = repository.deleteMovements(movementsIds)
     result
   }
 }

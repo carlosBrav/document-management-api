@@ -67,4 +67,8 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider)
       .update((new java.sql.Timestamp(convertToDate(currentDate).getTime), new java.sql.Timestamp(new Date().getTime), userId, asignadoA)))
   }
 
+  def deleteMovements(movementsIds: Seq[String]) = {
+    db.run(query.filter(x => x.id.inSet(movementsIds)).delete)
+  }
+
 }

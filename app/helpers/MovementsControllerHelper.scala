@@ -10,6 +10,9 @@ import utils.UniqueId
 
 object MovementsControllerHelper {
 
+  case class RequestDeleteMovements(movementsIds: Seq[String])
+  implicit val requestDeleteMovementsFormat: OFormat[RequestDeleteMovements] = Json.format[RequestDeleteMovements]
+
   case class ResponseModelMovements(id: Option[String],
                                     movimiento: Option[Int],
                                     numTram: Option[String],
@@ -26,10 +29,10 @@ object MovementsControllerHelper {
                                     observacion: Option[String],
                                     indiNombre: Option[String],
                                     indiCod: Option[String],
-                                    docuNombre: Option[String],
-                                    docuNum: Option[String],
-                                    docuSiglas: Option[String],
-                                    docuAnio: Option[String])
+                                    docuNombre: String,
+                                    docuNum: String,
+                                    docuSiglas: String,
+                                    docuAnio: String)
 
   implicit val responseModelMovementsFormat: OFormat[ResponseModelMovements] = Json.format[ResponseModelMovements]
 
@@ -52,10 +55,10 @@ object MovementsControllerHelper {
       Option(convertToString(movimiento.fechaEnvio)),
       movimiento.observacion,movimiento.indiNombre,
       movimiento.indiCod,
-      movimiento.docuNombre,
-      movimiento.docuNum,
-      movimiento.docuSiglas,
-      movimiento.docuAnio)
+      movimiento.docuNombre.getOrElse(""),
+      movimiento.docuNum.getOrElse(""),
+      movimiento.docuSiglas.getOrElse(""),
+      movimiento.docuAnio.getOrElse(""))
     response
   }
 
