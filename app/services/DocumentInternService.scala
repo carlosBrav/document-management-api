@@ -41,7 +41,7 @@ class DocumentInternService @Inject()(
     documents
   }
 
-  def createCiculares(userId: String, officeId: String, documentIntern: DocumentosInternos, movements: Seq[Movimientos]): Future[Try[Option[Int]]] = {
+  def createCirculars(documentIntern: DocumentosInternos, movements: Seq[Movimientos]): Future[Try[Option[Int]]] = {
     repository.db.run(
       (repository.saveQuery(documentIntern) andThen movementsRepository.saveListQuery(movements)).transactionally.asTry
     )

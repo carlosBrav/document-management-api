@@ -4,14 +4,14 @@ import play.api.libs.json.{Json, OFormat}
 import models.{DocumentosInternos, Movimientos}
 import java.util._
 
-import helpers.MovementsControllerHelper.RequestMovements
+import helpers.MovementsControllerHelper.RequestModelMovements
 import utils.Constants._
 import utils.UniqueId
 
 object DocumentInternControllerHelper {
 
   case class RequestModelDocumentosInternos(
-                                             estado: Option[String],
+                                             estadoDocumento: Option[String],
                                              tipoDocuId: String,
                                              numDocumento: Option[Int],
                                              siglas: Option[String],
@@ -46,7 +46,7 @@ object DocumentInternControllerHelper {
       Some(""),Some(""),"",true,None,None))
 
     ResponseDocumentsInterns(document.id,
-      document.estado,document.tipoDocuId,Some(document.numDocumento.get+1),document.siglas,document.anio,
+      document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get+1),document.siglas,document.anio,
       document.asunto, document.observacion,document.dependenciaId,document.active,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
   }
@@ -54,31 +54,31 @@ object DocumentInternControllerHelper {
   case class ResponseAllDocumentsInterns(responseCode: Int, responseMessage: String, documents: Seq[ResponseDocumentsInterns])
   implicit val responseAllDocumentsInternsFormat: OFormat[ResponseAllDocumentsInterns] = Json.format[ResponseAllDocumentsInterns]
 
-  case class RequestCreateCircular(documentoInterno: RequestModelDocumentosInternos,
-                                        movements: Seq[RequestMovements]) {
+  case class RequestCreateCircular(documentIntern: RequestModelDocumentosInternos,
+                                   destinations: Seq[String]) {
 
     def toModels(userId: String, officeId: String): (DocumentosInternos, Seq[Movimientos]) = {
 
 
       val documentInternoId = UniqueId.generateId
       val newDocumentIntern = DocumentosInternos(Some(documentInternoId),
-        documentoInterno.estado,
-        documentoInterno.tipoDocuId,
-        documentoInterno.numDocumento,
-        documentoInterno.siglas,
-        documentoInterno.anio,
-        documentoInterno.asunto,
-        documentoInterno.observacion,
-        documentoInterno.dependenciaId,
-        documentoInterno.active,
+        documentIntern.estadoDocumento,
+        documentIntern.tipoDocuId,
+        documentIntern.numDocumento,
+        documentIntern.siglas,
+        documentIntern.anio,
+        documentIntern.asunto,
+        documentIntern.observacion,
+        documentIntern.dependenciaId,
+        documentIntern.active,
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
-      val newMovements = movements.map(move => {
+      val newMovements = destinations.map(destination => {
         val movementId = UniqueId.generateId
-        val newMovement = Movimientos(Some(movementId), Some(move.movimiento.get), move.numTram,
-          "DERIVADO", Some(documentInternoId), move.destinyId, officeId, Some(""), userId, None, Some(new java.sql.Timestamp(new Date().getTime)),
-          move.observacion, move.indiNombre, move.indiCod, move.docuNombre,move.docuNum,move.docuSiglas, move.docuAnio,
+        val newMovement = Movimientos(Some(movementId), Some(0), Some(movementId),
+          "DERIVADO", Some(documentInternoId), officeId , destination, Some(""), userId, None, Some(new java.sql.Timestamp(new Date().getTime)),
+          Some(""), Some(""), Some(""), Some(""),Some(""),Some(""), Some(""),
           Some(new java.sql.Timestamp(new Date().getTime)), Some(new java.sql.Timestamp(new Date().getTime)))
         newMovement
       })

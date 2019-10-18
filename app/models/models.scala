@@ -66,7 +66,7 @@ case class TipoDocumento(id: Option[String],
                         ) extends BaseEntity
 
 case class DocumentosInternos(id: Option[String],
-                              estado: Option[String],
+                              estadoDocumento: Option[String],
                               tipoDocuId: String,
                               numDocumento: Option[Int],
                               siglas: Option[String],

@@ -18,6 +18,11 @@ PUT           /api/movements                            controllers.UsersControl
 DELETE        /api/movements                            controllers.UsersController.deleteMovements
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 
+#TYPEDOCUMENTS
+GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
+
+#DOCUMENT INTERN
+POST          /api/documentIntern/office/:officeId/user/:userId   controllers.DocumentInternController.createDocumentCircular(officeId,userId)
 #INITIAL
 GET            /api/initialState                        controllers.HomeController.initialState
 

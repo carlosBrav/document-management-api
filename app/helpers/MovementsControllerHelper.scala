@@ -65,7 +65,7 @@ object MovementsControllerHelper {
   case class RequestUpdateMovements(userId: String, movementsIds: Seq[String], currentDate: String, asignadoA: String)
   implicit val requestUpdateMovementsFormat: OFormat[RequestUpdateMovements] = Json.format[RequestUpdateMovements]
 
-  case class RequestMovements(
+  case class RequestModelMovements(
                                movimiento: Option[Int],
                                numTram: Option[String],
                                estadoDocumento: String,
@@ -80,9 +80,9 @@ object MovementsControllerHelper {
                                docuSiglas: Option[String],
                                docuAnio: Option[String])
 
-  implicit val requestMovementsFormat: OFormat[RequestMovements] = Json.format[RequestMovements]
+  implicit val requestMovementsFormat: OFormat[RequestModelMovements] = Json.format[RequestModelMovements]
 
-  case class RequestDeriveMovements(userId: String, officeId: String, movements: Seq[RequestMovements]) {
+  case class RequestDeriveMovements(userId: String, officeId: String, movements: Seq[RequestModelMovements]) {
 
     def toMovementsModel: Seq[Movimientos] = {
       val newMovements = movements.map( move => {
@@ -100,14 +100,14 @@ object MovementsControllerHelper {
   implicit val requestDeriveMovements: OFormat[RequestDeriveMovements] = Json.format[RequestDeriveMovements]
 
   case class RequestResponseToMovements(documentoInterno: RequestModelDocumentosInternos,
-                                        movement: RequestMovements) {
+                                        movement: RequestModelMovements) {
 
     def toMovementModel(userId: String, officeId: String): (DocumentosInternos, Movimientos) = {
 
 
       val documentInternoId = UniqueId.generateId
       val newDocumentIntern = DocumentosInternos(Some(documentInternoId),
-        documentoInterno.estado,
+        documentoInterno.estadoDocumento,
         documentoInterno.tipoDocuId,
         documentoInterno.numDocumento,
         documentoInterno.siglas,
@@ -120,9 +120,23 @@ object MovementsControllerHelper {
         Some(new java.sql.Timestamp(new Date().getTime)))
 
       val movementId = UniqueId.generateId
-      val newMovement = Movimientos(Some(movementId),Some(movement.movimiento.get +1),movement.numTram,
-        "DERIVADO",Some(documentInternoId),movement.destinyId,officeId,Some(""), userId,None,Some(new java.sql.Timestamp(new Date().getTime)),
-        movement.observacion,movement.indiNombre,movement.indiCod, movement.docuNombre,movement.docuNum,movement.docuSiglas, movement.docuAnio,
+      val newMovement = Movimientos(Some(movementId),
+        Some(movement.movimiento.get +1),
+        movement.numTram,
+        "DERIVADO",
+        Some(documentInternoId),
+        movement.destinyId,
+        officeId,
+        Some(""),
+        userId,None,
+        Some(new java.sql.Timestamp(new Date().getTime)),
+        movement.observacion,
+        movement.indiNombre,
+        movement.indiCod,
+        movement.docuNombre,
+        movement.docuNum,
+        movement.docuSiglas,
+        movement.docuAnio,
         Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
       (newDocumentIntern,newMovement)
     }

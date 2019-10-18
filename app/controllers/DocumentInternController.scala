@@ -13,6 +13,8 @@ import helpers.DocumentInternControllerHelper._
 import org.apache.commons.lang3.exception.ExceptionUtils
 import utils.{Constants, ResponseCodes}
 
+import scala.util.{Failure, Success}
+
 class DocumentInternController @Inject()(
                                         documentInternService: DocumentInternService,
                                         cc: ControllerComponents
@@ -44,17 +46,19 @@ class DocumentInternController @Inject()(
       },
       userRequest => {
         val (documentIntern, movements) = userRequest.toModels(userId, officeId)
-        val response = for{
-          _ <- documentInternService.createCiculares(userId,officeId,documentIntern,movements)
-        }yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"Se han creado ${movements.length} documentos circulares")
-        )
-        response recover {
-          case e =>
-            logger.error("error creando documentos circulares: " + e.getMessage)
+        println("DOCUMENT INTERN ", documentIntern)
+        println("MOVEMENTS ", movements)
+        val response = documentInternService.createCirculars(documentIntern,movements)
+        response map{
+          case Success(_) =>
             JsonOk(
-            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar crear documentos circulares")
-          )
+              Response[String](ResponseCodes.SUCCESS, "success", s"Se ha creado el documento circular, con ${movements.length} destinos")
+            )
+          case Failure(ex) =>
+            logger.error("error creando documentos circulares: " + ex.getMessage)
+            JsonOk(
+              ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar crear documentos circulares")
+            )
         }
       }
     )
