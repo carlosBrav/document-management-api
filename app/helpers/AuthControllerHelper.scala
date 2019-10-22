@@ -23,6 +23,9 @@ object AuthControllerHelper {
                            nombre: String,
                            apellido: String,
                            telefono: Option[String],
+                           dependencyId: String,
+                           dependencyName: String,
+                           dependencySiglas: String,
                            fechaCreacion: Option[String],
                            fechaModificacion: Option[String]
                           )

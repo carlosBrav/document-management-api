@@ -46,7 +46,7 @@ object DocumentInternControllerHelper {
       Some(""),Some(""),"",true,None,None))
 
     ResponseDocumentsInterns(document.id,
-      document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get+1),document.siglas,document.anio,
+      document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get),document.siglas,document.anio,
       document.asunto, document.observacion,document.dependenciaId,document.active,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
   }

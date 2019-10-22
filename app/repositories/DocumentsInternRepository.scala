@@ -14,7 +14,7 @@ class DocumentsInternRepository @Inject()(dbConfigProvider: DatabaseConfigProvid
   extends BaseEntityRepository[DocumentoInternoTable, DocumentosInternos](dbConfigProvider, TableQuery[DocumentoInternoTable]){
 
   def getMaxCorrelative(officeId: String, tipoDocuId: String) = {
-    filter(x => x.dependenciaId === officeId && x.tipoDocuId === tipoDocuId).map(x => x.maxBy(_.numDocumento))
+    db.run(query.sortBy(_.numDocumento.desc).filter(x => x.dependenciaId === officeId && x.tipoDocuId === tipoDocuId).result.headOption)
   }
 
   def getDocumentsCirculars(typeDocumentId: String) = {

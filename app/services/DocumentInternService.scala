@@ -16,7 +16,7 @@ class DocumentInternService @Inject()(
                                )
   extends BaseEntityService[DocumentoInternoTable, DocumentosInternos, DocumentsInternRepository]
 {
-  def getMaxCorrelative(officeId: String, tipoDocuId: String): Future[DocumentosInternos] = {
+  def getMaxCorrelative(officeId: String, tipoDocuId: String) = {
     repository.getMaxCorrelative(officeId, tipoDocuId)
   }
 

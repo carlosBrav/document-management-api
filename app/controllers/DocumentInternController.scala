@@ -46,8 +46,6 @@ class DocumentInternController @Inject()(
       },
       userRequest => {
         val (documentIntern, movements) = userRequest.toModels(userId, officeId)
-        println("DOCUMENT INTERN ", documentIntern)
-        println("MOVEMENTS ", movements)
         val response = documentInternService.createCirculars(documentIntern,movements)
         response map{
           case Success(_) =>

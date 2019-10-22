@@ -32,7 +32,7 @@ class AuthController @Inject()(
       userRequest => {
         userService.processLogin(userRequest.user, userRequest.password) map {
           case Success(userRolResult) =>
-            val (users,rolRes) = userRolResult
+            val (users,rolRes, dependency) = userRolResult
             val token = JWTUtil.createToken(Map(
               "userId" -> users.id.get,
               "usuario" -> users.usuario,
@@ -43,7 +43,10 @@ class AuthController @Inject()(
             JsonOk(
               Response[ResponseLogin](ResponseCodes.SUCCESS,"success",
                 ResponseLogin(users.id, users.usuario, token, users.estado, users.rolId, rolRes.get.nombre,
-                  users.nombre, users.apellido, users.telefono, Option(convertToString(users.fechaCreacion)),
+                  users.nombre, users.apellido, users.telefono,
+                  dependency.get.id.get,
+                  dependency.get.nombre, dependency.get.siglas.get,
+                  Option(convertToString(users.fechaCreacion)),
                   Option(convertToString(users.fechaModificacion))))
             )
           case Failure(e)=>

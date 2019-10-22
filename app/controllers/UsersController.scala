@@ -9,6 +9,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import utils.Constants._
 import utils.Constants.Implicits._
 import helpers.MovementsControllerHelper._
+import helpers.UsersControllerHelper._
 import play.api.libs.json.{JsValue, Json}
 import utils._
 import scala.util.Success
@@ -117,17 +118,38 @@ class UsersController @Inject()(
     )
   }
 
-  def getCorrelativeMax(officeId: String, tipoDocuId: String): Action[AnyContent] = Action.async { implicit request =>
-    documentService.getMaxCorrelative(officeId,tipoDocuId)
-      .map(document =>
-      JsonOk(
-        Response[String](ResponseCodes.SUCCESS, "success", s"${document.numDocumento}")
-      ))
-      .recover {
-        case ex =>
-          logger.error(s"error obteniendo max correlativo: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error alobtener max correlativo"))
+  def getCorrelativeMax: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[maxCorrelativeRequest].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      correlativeRequest =>{
+        val values = documentService.getMaxCorrelative(correlativeRequest.officeId,correlativeRequest.typeDocumentId)
+        values.map(value => {
+          JsonOk(
+            Response[maxCorrelativeResponse](ResponseCodes.SUCCESS, "success",
+              if(value.getOrElse(0) == 0){
+                maxCorrelativeResponse("%05d".format(1),correlativeRequest.siglas, getCurrentYear().toString)
+              }else{
+                if(value.get.anio.get == getCurrentYear().toString){
+                  maxCorrelativeResponse("%05d".format(value.get.numDocumento.get + 1),value.get.siglas.get, value.get.anio.get)
+                }else{
+                  maxCorrelativeResponse("%05d".format(1),value.get.siglas.get, value.get.anio.get)
+                }
+              }
+            )
+          )
+        }).recover {
+          case ex =>
+            logger.error(s"error obteniendo max correlativo: $ex")
+            JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error alobtener max correlativo"))
+        }
       }
+    )
   }
 
   def generateResponseToMovements(userId: String, officeId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>

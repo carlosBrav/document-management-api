@@ -21,8 +21,10 @@ POST          /api/movements/:userId                    controllers.ViewsControl
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
 
+
 #DOCUMENT INTERN
 POST          /api/documentIntern/office/:officeId/user/:userId   controllers.DocumentInternController.createDocumentCircular(officeId,userId)
+GET           /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
 #INITIAL
 GET            /api/initialState                        controllers.HomeController.initialState
 

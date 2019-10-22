@@ -9,6 +9,7 @@ import play.api.libs.json._
 import play.api.mvc.Result
 import play.api.mvc.Results.Ok
 import play.api.libs.functional.syntax._
+import java.util.Calendar
 
 object ResponseCodes {
   val SUCCESS = 0
@@ -131,4 +132,9 @@ object Constants {
       new Date()
     }
   }
+
+  def getCurrentYear() = {
+    Calendar.getInstance.get(Calendar.YEAR)
+  }
+
 }
