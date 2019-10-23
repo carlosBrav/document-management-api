@@ -24,7 +24,7 @@ GET           /api/typeDocuments                        controllers.TypeDocument
 
 #DOCUMENT INTERN
 POST          /api/documentIntern/office/:officeId/user/:userId   controllers.DocumentInternController.createDocumentCircular(officeId,userId)
-GET           /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
+POST           /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
 #INITIAL
 GET            /api/initialState                        controllers.HomeController.initialState
 

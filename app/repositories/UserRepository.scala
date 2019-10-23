@@ -20,14 +20,14 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
     filter(_.id === id).map(users => Some(users.head)) recover { case _: Exception => None }
   }
 
-  def loadByUserName(userName: String): Future[Option[(Usuario, Option[Rol], Option[Dependencias])]] = {
+  def loadByUserName(userName: String) = {
     val userQuery = query
     val rolQuery = rolRepository.query
     val dependencyQuery = dependencyRepository.query
 
     val joinUserRol = for {
       ((user, rol), typeDocument) <- userQuery.filter(_.usuario === userName) joinLeft rolQuery on (_.rolId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id)
-    } yield (user, rol, typeDocument)
+    } yield ((user, rol), typeDocument)
 
     db.run(joinUserRol.result.headOption)
   }

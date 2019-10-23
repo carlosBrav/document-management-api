@@ -32,6 +32,7 @@ case class Dependencias(id: Option[String],
                         estado: Boolean,
                         siglas: Option[String],
                         codigo: String,
+                        tipo: Option[String],
                         fechaCreacion: Option[Timestamp] ,
                         fechaModificacion: Option[Timestamp]
                        ) extends BaseEntity

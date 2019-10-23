@@ -65,8 +65,8 @@ class DependenciaTable(tag: Tag) extends BaseEntityTable[Dependencias](tag,"DEPE
   def estado= column[Boolean]("ESTADO")
   def siglas= column[String]("SIGLAS")
   def codigo= column[String]("CODIGO")
-
-  def * = (id.?, nombre, estado, siglas.?, codigo, fechaCreacion.?, fechaModificacion.?) <>
+  def tipo= column[String]("TIPO")
+  def * = (id.?, nombre, estado, siglas.?, codigo, tipo.?, fechaCreacion.?, fechaModificacion.?) <>
     (Dependencias.tupled, Dependencias.unapply)
 }
 

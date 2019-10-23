@@ -22,6 +22,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents, dependencyService: DependencyService) extends AbstractController(cc) {
   implicit val ec: ExecutionContext = defaultExecutionContext
+  val logger = Logger(this.getClass)
   /**
    * Create an Action to render an HTML page.
    *
@@ -38,14 +39,21 @@ class HomeController @Inject()(cc: ControllerComponents, dependencyService: Depe
       dependencyResponses <- dependencyService.getAllDependencies.map {
         dependencies =>
           dependencies.map {
-            dependency => ResponseDependency(dependency.id, dependency.nombre, dependency.estado, dependency.siglas, dependency.codigo)
+            dependency => ResponseDependency(dependency.id,
+              dependency.nombre,
+              dependency.estado,
+              dependency.siglas,
+              dependency.codigo,
+              dependency.tipo.getOrElse("-1"))
           }
       }
     } yield JsonOk(
       InitialStateResponse(ResponseCodes.SUCCESS,"Success",Json.obj("dependencies" -> dependencyResponses))
     )
     result recover {
-      case _ => JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error"))
+      case ex =>
+        logger.error("error initial: " + ex.getMessage)
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error"))
     }
   }
   

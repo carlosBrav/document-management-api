@@ -29,7 +29,7 @@ class UserService @Inject()(
         userResult <- repository.loadByUserName(usuario)
       } yield {
         if(userResult.isDefined){
-          val user = userResult.get._1
+          val user = userResult.get._1._1
           if(user.estado){
             if (validateHashPass(password, user.password)) {
               Try(userResult.get)

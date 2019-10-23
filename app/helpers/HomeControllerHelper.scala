@@ -8,7 +8,8 @@ object HomeControllerHelper {
                                  nombre: String,
                                  estado: Boolean,
                                  siglas: Option[String],
-                                 codigo: String)
+                                 codigo: String,
+                                 tipo: String)
   implicit val responseDependencyFormat: OFormat[ResponseDependency] = Json.format[ResponseDependency]
 
   case class InitialStateResponse(responseCode: Int, responseMessage: String, data: JsObject)
