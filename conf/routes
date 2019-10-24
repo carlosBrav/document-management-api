@@ -21,6 +21,8 @@ POST          /api/movements/:userId                    controllers.ViewsControl
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
 
+#USERS
+GET           /api/userBossOffice                       controllers.UsersController.getOfficeBoss
 
 #DOCUMENT INTERN
 POST          /api/documentIntern/office/:officeId/user/:userId   controllers.DocumentInternController.createDocumentCircular(officeId,userId)

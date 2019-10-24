@@ -28,8 +28,10 @@ class UsuarioTable(tag: Tag) extends BaseEntityTable[Usuario](tag,"USUARIO") {
   def apellido = column[String]("APELLIDO")
   def telefono = column[String]("TELEFONO")
   def dependenciaId = column[String]("DEPENDENCIA_ID")
+  def isSubOfficeBoss = column[Boolean]("ISSUBOFFICEBOSS")
+  def isOfficeBoss = column[Boolean]("ISOFFICEBOSS")
   def * =
-    (id.?, usuario,password,estado,rolId,nombre,apellido,telefono.?,dependenciaId.?,
+    (id.?, usuario,password,estado,rolId,nombre,apellido,telefono.?,dependenciaId.?,isSubOfficeBoss, isOfficeBoss,
     fechaCreacion.?,fechaModificacion.?) <>
       (Usuario.tupled, Usuario.unapply)
 }

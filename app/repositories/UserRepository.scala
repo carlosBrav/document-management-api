@@ -31,5 +31,9 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
 
     db.run(joinUserRol.result.headOption)
   }
+
+  def getOfficeBoss = {
+    filter(_.isOfficeBoss === true).map(users => Some(users.head)) recover { case _: Exception => None}
+  }
 }
 

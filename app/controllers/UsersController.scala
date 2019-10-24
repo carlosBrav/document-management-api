@@ -216,4 +216,16 @@ class UsersController @Inject()(
       }
     )
   }
+
+  def getOfficeBoss : Action[AnyContent] = Action.async { implicit request =>
+    userService.getOfficeBoss
+      .map(user =>{
+        JsonOk(userResponse(ResponseCodes.SUCCESS, toUserModel(user.get)))
+      })
+      .recover {
+        case ex =>
+          logger.error(s"error obteniendo usuario jefe: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al obtener usuario jefe de oficina"))
+      }
+  }
 }

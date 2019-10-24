@@ -58,4 +58,8 @@ class UserService @Inject()(
       case None => Failure(new Exception("User not found"))
     }
   }
+
+  def getOfficeBoss = {
+    repository.getOfficeBoss
+  }
 }

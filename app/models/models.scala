@@ -23,6 +23,8 @@ case class Usuario(id: Option[String],
                    apellido: String,
                    telefono: Option[String],
                    dependenciaId: Option[String],
+                   isSubOfficeBoss: Boolean,
+                   isOfficeBoss: Boolean,
                    fechaCreacion: Option[Timestamp] ,
                    fechaModificacion: Option[Timestamp]
                   ) extends BaseEntity
