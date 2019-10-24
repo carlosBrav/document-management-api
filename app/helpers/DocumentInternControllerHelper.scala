@@ -20,7 +20,7 @@ object DocumentInternControllerHelper {
                                              observacion: Option[String],
                                              dependenciaId: String,
                                              userId: Option[String],
-                                             assignTo: Option[String],
+                                             firma: Option[String],
                                              active: Boolean)
 
   implicit val requestDocumentosInternosFormat: OFormat[RequestModelDocumentosInternos] =
@@ -51,7 +51,7 @@ object DocumentInternControllerHelper {
 
     ResponseDocumentsInterns(document.id,
       document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get),document.siglas,document.anio,
-      document.asunto, document.observacion,document.dependenciaId,document.active, document.userId, document.assignTo,
+      document.asunto, document.observacion,document.dependenciaId,document.active, document.userId, document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
   }
 
@@ -66,7 +66,7 @@ object DocumentInternControllerHelper {
 
       val documentInternoId = UniqueId.generateId
       val newDocumentIntern = DocumentosInternos(Some(documentInternoId),
-        documentIntern.estadoDocumento,
+        Some("GENERADO"),
         documentIntern.tipoDocuId,
         documentIntern.numDocumento,
         documentIntern.siglas,
@@ -74,9 +74,9 @@ object DocumentInternControllerHelper {
         documentIntern.asunto,
         documentIntern.observacion,
         documentIntern.dependenciaId,
-        documentIntern.active,
+        true,
         documentIntern.userId,
-        documentIntern.assignTo,
+        documentIntern.firma,
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 

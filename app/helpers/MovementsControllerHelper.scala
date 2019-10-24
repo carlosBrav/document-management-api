@@ -117,7 +117,7 @@ object MovementsControllerHelper {
         documentoInterno.dependenciaId,
         documentoInterno.active,
         documentoInterno.userId,
-        documentoInterno.assignTo,
+        documentoInterno.firma,
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
