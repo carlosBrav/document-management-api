@@ -19,6 +19,8 @@ object DocumentInternControllerHelper {
                                              asunto: Option[String],
                                              observacion: Option[String],
                                              dependenciaId: String,
+                                             userId: Option[String],
+                                             assignTo: Option[String],
                                              active: Boolean)
 
   implicit val requestDocumentosInternosFormat: OFormat[RequestModelDocumentosInternos] =
@@ -35,6 +37,8 @@ object DocumentInternControllerHelper {
                                        observacion: Option[String],
                                        dependenciaId: String,
                                        active: Boolean,
+                                       userId: Option[String],
+                                       assignTo: Option[String],
                                        fechaCreacion: Option[String],
                                        fechaModificacion: Option[String],
                                      )
@@ -43,11 +47,11 @@ object DocumentInternControllerHelper {
   def toResponseDocumentsInterns(tipoDocuId: Option[String], siglas: Option[String], documents: Option[DocumentosInternos]) : ResponseDocumentsInterns = {
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), "",Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",true,None,None))
+      Some(""),Some(""),"",true,Some(""),Some(""),None,None))
 
     ResponseDocumentsInterns(document.id,
       document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get),document.siglas,document.anio,
-      document.asunto, document.observacion,document.dependenciaId,document.active,
+      document.asunto, document.observacion,document.dependenciaId,document.active, document.userId, document.assignTo,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
   }
 
@@ -71,6 +75,8 @@ object DocumentInternControllerHelper {
         documentIntern.observacion,
         documentIntern.dependenciaId,
         documentIntern.active,
+        documentIntern.userId,
+        documentIntern.assignTo,
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
