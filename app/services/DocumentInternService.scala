@@ -47,4 +47,8 @@ class DocumentInternService @Inject()(
     )
   }
 
+  def getCircularDocuments(userId: String) = {
+    repository.getDocumentsCirculars(userId)
+  }
+
 }

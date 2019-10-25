@@ -10,6 +10,7 @@ import play.api.libs.json.{JsValue, Json}
 
 import scala.concurrent.{ExecutionContext, Future}
 import helpers.DocumentInternControllerHelper._
+import helpers.MovementsControllerHelper._
 import org.apache.commons.lang3.exception.ExceptionUtils
 import utils.{Constants, ResponseCodes}
 
@@ -60,5 +61,19 @@ class DocumentInternController @Inject()(
         }
       }
     )
+  }
+
+  def getCircularDocuments(userId: String): Action[AnyContent] = Action.async { implicit request =>
+    documentInternService
+      .getCircularDocuments(userId)
+      .map(documents => {
+        JsonOk(
+          
+        )
+      }).recover {
+      case e =>
+        logger.error("error loading circular documents: " + e.getMessage)
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los documentos circulares"))
+    }
   }
 }

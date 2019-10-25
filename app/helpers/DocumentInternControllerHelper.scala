@@ -4,7 +4,7 @@ import play.api.libs.json.{Json, OFormat}
 import models.{DocumentosInternos, Movimientos}
 import java.util._
 
-import helpers.MovementsControllerHelper.RequestModelMovements
+import helpers.MovementsControllerHelper.{RequestModelMovements,ResponseModelMovements}
 import utils.Constants._
 import utils.UniqueId
 
@@ -50,7 +50,7 @@ object DocumentInternControllerHelper {
                                        dependenciaId: String,
                                        active: Boolean,
                                        userId: Option[String],
-                                       assignTo: Option[String],
+                                       firma: Option[String],
                                        fechaCreacion: Option[String],
                                        fechaModificacion: Option[String],
                                      )
@@ -66,6 +66,12 @@ object DocumentInternControllerHelper {
       document.asunto, document.observacion,document.dependenciaId,document.active, document.userId, document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
   }
+
+  case class SubResponseCircular(documentIntern: ResponseDocumentsInterns, movements: Seq[ResponseModelMovements])
+  implicit val subResponseCircularFormat: OFormat[SubResponseCircular] = Json.format[SubResponseCircular]
+
+  case class ResponseCircularDocuments(responseCode: Int, data: Seq[SubResponseCircular])
+  implicit val responseCircularDocumentsFormat: OFormat[ResponseCircularDocuments] = Json.format[ResponseCircularDocuments]
 
   case class ResponseAllDocumentsInterns(responseCode: Int, responseMessage: String, documents: Seq[ResponseDocumentsInterns])
   implicit val responseAllDocumentsInternsFormat: OFormat[ResponseAllDocumentsInterns] = Json.format[ResponseAllDocumentsInterns]

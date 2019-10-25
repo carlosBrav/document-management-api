@@ -39,6 +39,29 @@ object MovementsControllerHelper {
   case class ResponseMovements(responseCode: Int, responseMessage: String, data: Seq[ResponseModelMovements])
   implicit val responseMovementsFormat: OFormat[ResponseMovements] = Json.format[ResponseMovements]
 
+  def toResponseModelMovements(movimiento: Movimientos) = {
+    val response = ResponseModelMovements(movimiento.id,
+      movimiento.movimiento,
+      movimiento.numTram,
+      movimiento.estadoDocumento,
+      movimiento.documentosInternosId,
+      Some(movimiento.dependenciasId),
+      Some(""),
+      Some(movimiento.dependenciasId1),
+      Some(""),
+      movimiento.asignadoA,
+      movimiento.usuarioId,
+      Option(convertToString(movimiento.fechaIngreso)),
+      Option(convertToString(movimiento.fechaEnvio)),
+      movimiento.observacion,movimiento.indiNombre,
+      movimiento.indiCod,
+      movimiento.docuNombre.getOrElse(""),
+      movimiento.docuNum.getOrElse(""),
+      movimiento.docuSiglas.getOrElse(""),
+      movimiento.docuAnio.getOrElse(""))
+    response
+  }
+
   def toResponseMovements(movimiento: Movimientos, dependencyOrigin: Option[Dependencias], dependencyDestiny: Option[Dependencias]) : ResponseModelMovements ={
     val response = ResponseModelMovements(movimiento.id,
       movimiento.movimiento,
