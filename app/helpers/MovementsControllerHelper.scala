@@ -2,7 +2,7 @@ package helpers
 
 import java.util.Date
 
-import helpers.DocumentInternControllerHelper.RequestModelDocumentosInternos
+import helpers.DocumentInternControllerHelper.RequestResponseModelDocInt
 import models.{Dependencias, DocumentosInternos, Movimientos}
 import play.api.libs.json.{Json, OFormat}
 import utils.Constants.convertToString
@@ -99,7 +99,7 @@ object MovementsControllerHelper {
 
   implicit val requestDeriveMovements: OFormat[RequestDeriveMovements] = Json.format[RequestDeriveMovements]
 
-  case class RequestResponseToMovements(documentoInterno: RequestModelDocumentosInternos,
+  case class RequestResponseToMovements(documentoInterno: RequestResponseModelDocInt,
                                         movement: RequestModelMovements) {
 
     def toMovementModel(userId: String, officeId: String): (DocumentosInternos, Movimientos) = {

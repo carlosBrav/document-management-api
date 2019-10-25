@@ -10,18 +10,30 @@ import utils.UniqueId
 
 object DocumentInternControllerHelper {
 
+  case class RequestResponseModelDocInt(
+                                        estadoDocumento: Option[String],
+                                        tipoDocuId: String,
+                                        numDocumento: Option[Int],
+                                        siglas: Option[String],
+                                        anio: Option[String],
+                                        observacion: Option[String],
+                                        asunto: Option[String],
+                                        dependenciaId: String,
+                                        userId: Option[String],
+                                        firma: Option[String],
+                                        active: Boolean)
+  implicit val requestResponseModelDocIntFormat: OFormat[RequestResponseModelDocInt] =
+    Json.format[RequestResponseModelDocInt]
+
   case class RequestModelDocumentosInternos(
-                                             estadoDocumento: Option[String],
                                              tipoDocuId: String,
                                              numDocumento: Option[Int],
                                              siglas: Option[String],
                                              anio: Option[String],
                                              asunto: Option[String],
-                                             observacion: Option[String],
                                              dependenciaId: String,
                                              userId: Option[String],
-                                             firma: Option[String],
-                                             active: Boolean)
+                                             firma: Option[String])
 
   implicit val requestDocumentosInternosFormat: OFormat[RequestModelDocumentosInternos] =
     Json.format[RequestModelDocumentosInternos]
@@ -72,7 +84,7 @@ object DocumentInternControllerHelper {
         documentIntern.siglas,
         documentIntern.anio,
         documentIntern.asunto,
-        documentIntern.observacion,
+        Some(""),
         documentIntern.dependenciaId,
         true,
         documentIntern.userId,
