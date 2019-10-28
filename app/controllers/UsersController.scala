@@ -44,7 +44,11 @@ class UsersController @Inject()(
 
     movimientoService.loadMovementsByTramNum(numTram)
       .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        JsonOk(
+          ResponseMovements(ResponseCodes.SUCCESS, "Success",
+            movements.map(move =>
+              toResponseMovements(move._1,move._2,move._3))
+          )
         )
       )
       .recover {

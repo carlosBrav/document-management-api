@@ -42,4 +42,8 @@ class MovimientoService @Inject()(
     val result = repository.deleteMovements(movementsIds)
     result
   }
+
+  def getInternDocumentsByDocumentId(documentId: String) = {
+    repository.getMovementsByDocumentId(documentId)
+  }
 }

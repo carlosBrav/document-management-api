@@ -27,9 +27,9 @@ GET           /api/userBossOffice                       controllers.UsersControl
 #DOCUMENT INTERN
 POST          /api/documentIntern/office/:officeId/user/:userId   controllers.DocumentInternController.createDocumentCircular(officeId,userId)
 POST          /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
-GET           /api/documentIntern/user/:userId   controllers.DocumentInternController.getCircularDocuments(userId)
+GET           /api/documentIntern/user/:userId          controllers.DocumentInternController.getDocumentsByUserId(userId)
 #INITIAL
-GET           /api/initialState                        controllers.HomeController.initialState
+GET           /api/initialState                         controllers.HomeController.initialState
 
 GET           /                                         controllers.HomeController.index(path = "home")
 GET           /*path                                    controllers.HomeController.index(path)

@@ -166,7 +166,9 @@ object MovementsControllerHelper {
       (newDocumentIntern,newMovement)
     }
   }
-
   implicit val requestResponseToMovementsFormat: OFormat[RequestResponseToMovements] =
     Json.format[RequestResponseToMovements]
+
+  case class ResponseCircularDetails(responseCode: Int, data: Seq[ResponseModelMovements])
+  implicit val responseCircularDetailsFormat: OFormat[ResponseCircularDetails] = Json.format[ResponseCircularDetails]
 }

@@ -1,9 +1,10 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import repositories.{DocumentsInternRepository, MovimientosRepository}
+import repositories._
 import models.{DocumentoInternoTable, DocumentosInternos, Movimientos}
 import slick.jdbc.MySQLProfile.api._
+
 import scala.util.Failure
 import scala.concurrent.Future
 import scala.util.Try
@@ -12,7 +13,10 @@ import scala.concurrent.ExecutionContext.Implicits.global
 @Singleton
 class DocumentInternService @Inject()(
                                  override val repository: DocumentsInternRepository,
-                                 movementsRepository: MovimientosRepository
+                                 movementsRepository: MovimientosRepository,
+                                 dependencyRepository: DependencyRepository,
+                                 userRepository: UserRepository,
+                                 typeDocumentRepository: TypeDocumentRepository
                                )
   extends BaseEntityService[DocumentoInternoTable, DocumentosInternos, DocumentsInternRepository]
 {
@@ -36,19 +40,27 @@ class DocumentInternService @Inject()(
       }
   }
 
-  def getDocumentsInternsByTipoDocuId(tipoDocuId: String) : Future[Seq[DocumentosInternos]] = {
-    val documents = repository.filter(x => x.tipoDocuId === tipoDocuId)
-    documents
-  }
-
   def createCirculars(documentIntern: DocumentosInternos, movements: Seq[Movimientos]): Future[Try[Option[Int]]] = {
     repository.db.run(
       (repository.saveQuery(documentIntern) andThen movementsRepository.saveListQuery(movements)).transactionally.asTry
     )
   }
 
-  def getCircularDocuments(userId: String) = {
-    repository.getDocumentsCirculars(userId)
+  def getInternDocuments(userId: String) = {
+
+    val typeDocumentQuery = typeDocumentRepository.query
+    val dependencyQuery = dependencyRepository.query
+    val userQuery = userRepository.query
+    val documentQuery = repository.query
+
+    val joinResult = for {
+      (((document, typeDocument), dependency), user)
+        <- documentQuery
+        .sortBy(_.fechaCreacion.desc)
+        .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id) joinLeft userQuery on (_._1._1.userId === _.id)
+    } yield(document, typeDocument, dependency, user)
+
+    repository.db.run(joinResult.result)
   }
 
 }

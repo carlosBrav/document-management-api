@@ -13,6 +13,10 @@ import utils.Constants._
 class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider)
     extends BaseEntityRepository[MovimientoTable,Movimientos](dbConfigProvider, TableQuery[MovimientoTable]) {
 
+  def getMovementsByDocumentId(documentId: String) ={
+    filter(x => x.documentosInternosId === documentId)
+  }
+
   def getMovimientos = {
 
     filter(x => x.movimiento =!= 0 && x.numTram =!= "" && x.documentosInternosId === "")

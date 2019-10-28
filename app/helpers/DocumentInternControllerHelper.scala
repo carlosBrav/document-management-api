@@ -1,7 +1,7 @@
 package helpers
 
 import play.api.libs.json.{Json, OFormat}
-import models.{DocumentosInternos, Movimientos}
+import models.{DocumentosInternos, Movimientos, TipoDocumento, Usuario, Dependencias}
 import java.util._
 
 import helpers.MovementsControllerHelper.{RequestModelMovements,ResponseModelMovements}
@@ -42,39 +42,45 @@ object DocumentInternControllerHelper {
                                        id: Option[String],
                                        estado: Option[String],
                                        tipoDocuId: String,
+                                       documentName: Option[String],
                                        numDocumento: Option[Int],
                                        siglas: Option[String],
                                        anio: Option[String],
                                        asunto: Option[String],
                                        observacion: Option[String],
                                        dependenciaId: String,
+                                       dependencyName: Option[String],
                                        active: Boolean,
                                        userId: Option[String],
+                                       userName: Option[String],
+                                       userLastName: Option[String],
                                        firma: Option[String],
                                        fechaCreacion: Option[String],
                                        fechaModificacion: Option[String],
                                      )
   implicit val responseDocumentsInternsFormat: OFormat[ResponseDocumentsInterns] = Json.format[ResponseDocumentsInterns]
 
-  def toResponseDocumentsInterns(tipoDocuId: Option[String], siglas: Option[String], documents: Option[DocumentosInternos]) : ResponseDocumentsInterns = {
+  def toResponseDocumentsInterns(tipoDocuId: Option[String],
+                                 siglas: Option[String],
+                                 documents: Option[DocumentosInternos],
+                                 typeDocument: Option[TipoDocumento],
+                                 dependency: Option[Dependencias],
+                                 user: Option[Usuario]) : ResponseDocumentsInterns = {
+
     val document = documents.getOrElse(DocumentosInternos(Some(""),
-      Some(""), "",Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
+      Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
       Some(""),Some(""),"",true,Some(""),Some(""),None,None))
 
-    ResponseDocumentsInterns(document.id,
-      document.estadoDocumento,document.tipoDocuId,Some(document.numDocumento.get),document.siglas,document.anio,
-      document.asunto, document.observacion,document.dependenciaId,document.active, document.userId, document.firma,
+    val response = ResponseDocumentsInterns(document.id,
+      document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some(document.numDocumento.get),document.siglas,document.anio,
+      document.asunto, document.observacion,document.dependenciaId,Some(dependency.get.nombre),document.active, document.userId,
+      Some(user.get.nombre), Some(user.get.apellido), document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
+    response
   }
 
-  case class SubResponseCircular(documentIntern: ResponseDocumentsInterns, movements: Seq[ResponseModelMovements])
-  implicit val subResponseCircularFormat: OFormat[SubResponseCircular] = Json.format[SubResponseCircular]
-
-  case class ResponseCircularDocuments(responseCode: Int, data: Seq[SubResponseCircular])
-  implicit val responseCircularDocumentsFormat: OFormat[ResponseCircularDocuments] = Json.format[ResponseCircularDocuments]
-
-  case class ResponseAllDocumentsInterns(responseCode: Int, responseMessage: String, documents: Seq[ResponseDocumentsInterns])
-  implicit val responseAllDocumentsInternsFormat: OFormat[ResponseAllDocumentsInterns] = Json.format[ResponseAllDocumentsInterns]
+  case class ResponseDocumentsInternsByUserId(responseCode: Int, data: Seq[ResponseDocumentsInterns])
+  implicit val responseAllDocumentsInternsFormat: OFormat[ResponseDocumentsInternsByUserId] = Json.format[ResponseDocumentsInternsByUserId]
 
   case class RequestCreateCircular(documentIntern: RequestModelDocumentosInternos,
                                    destinations: Seq[String]) {
