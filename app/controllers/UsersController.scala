@@ -185,9 +185,9 @@ class UsersController @Inject()(
   def deleteDocumentIntern(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     val result: Future[Result] = for {
       Success(document) <- documentService.loadById(documentId)
-      _ <- Future.successful(documentService.updateById(documentId, document.copy(active = false)))
+      _ <- Future.successful(documentService.updateById(documentId, document.get.copy(active = false)))
     } yield JsonOk(
-      Response[String](ResponseCodes.SUCCESS, "Success", s"Documento ${document.id.get} eliminado")
+      Response[String](ResponseCodes.SUCCESS, "Success", s"Documento ${document.get.id.get} eliminado")
     )
     result recover {
       case _ => JsonOk(

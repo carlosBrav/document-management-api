@@ -10,6 +10,11 @@ import utils.UniqueId
 
 object DocumentInternControllerHelper {
 
+  case class RequestEditCircularDocument(id: Option[String],
+                                         asunto: Option[String],
+                                         dependencyId: Option[String])
+  implicit val requestEditCircularDocument: OFormat[RequestEditCircularDocument] = Json.format[RequestEditCircularDocument]
+
   case class RequestResponseModelDocInt(
                                         estadoDocumento: Option[String],
                                         tipoDocuId: String,
@@ -43,7 +48,7 @@ object DocumentInternControllerHelper {
                                        estado: Option[String],
                                        tipoDocuId: String,
                                        documentName: Option[String],
-                                       numDocumento: Option[Int],
+                                       numDocumento: Option[String],
                                        siglas: Option[String],
                                        anio: Option[String],
                                        asunto: Option[String],
@@ -72,7 +77,7 @@ object DocumentInternControllerHelper {
       Some(""),Some(""),"",true,Some(""),Some(""),None,None))
 
     val response = ResponseDocumentsInterns(document.id,
-      document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some(document.numDocumento.get),document.siglas,document.anio,
+      document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,document.anio,
       document.asunto, document.observacion,document.dependenciaId,Some(dependency.get.nombre),document.active, document.userId,
       Some(user.get.nombre), Some(user.get.apellido), document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))

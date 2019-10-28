@@ -31,9 +31,8 @@ class DocumentInternService @Inject()(
     )
   }
 
-  def loadById(documentId: String) : Future[Try[DocumentosInternos]] = {
-    val document = repository.filter(_.id === documentId)
-    document.map(_.head)
+  def loadById(documentId: String)  = {
+    repository.loadByDocumentId(documentId)
       .map(Try(_))
       .recover {
         case e: Exception => Failure(new Exception("Documento no encontrado"))

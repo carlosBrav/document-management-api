@@ -1,8 +1,9 @@
 package controllers
 
+import helpers.AuthControllerHelper.RequestLogin
 import javax.inject.Inject
 import play.api.Logger
-import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
+import play.api.mvc._
 import services.DocumentInternService
 import services.MovimientoService
 import utils.Constants._
@@ -80,6 +81,46 @@ class DocumentInternController @Inject()(
       case e =>
         logger.error("error loading circular details: " + e.getMessage)
         JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los detalles del documento circular"))
+    }
+  }
+
+  def editCircularDocument(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestEditCircularDocument].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      editRequest => {
+        val result = for {
+          Success(document) <- documentInternService.loadById(documentId)
+          newDocument = document.get.copy(asunto = editRequest.asunto,dependenciaId = editRequest.dependencyId.get)
+          _ <- Future.successful(documentInternService.updateById(documentId, newDocument))
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "Success", "Documento actualizado correctamente")
+        )
+        result recover {
+          case t: Throwable =>
+            logger.error(s"Update circular exception ${t.getMessage}")
+            JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar actualizar el documento circular"))
+        }
+      }
+    )
+  }
+
+  def deleteDocumentById(documentId: String): Action[AnyContent] = Action.async { implicit request =>
+    val result: Future[Result] = for {
+      Success(document) <- documentInternService.loadById(documentId)
+      _ <- Future.successful(documentInternService.updateById(document.get.id.get, document.get.copy(active = false)))
+    } yield JsonOk(
+      ResponseError[String](ResponseCodes.SUCCESS, s"Documento eliminado correctamente")
+    )
+    result recover {
+      case t: Throwable =>
+        logger.error(s"Delete a circular by id exception ${t.getMessage}")
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Documento no ha podido ser eliminado"))
     }
   }
 }
