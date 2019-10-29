@@ -1,7 +1,7 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import repositories.MovimientosRepository
+import repositories.{MovimientosRepository, DependencyRepository}
 import models.{Movimientos, MovimientoTable}
 import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.Future
@@ -11,7 +11,8 @@ import scala.util.{Failure, Try}
 
 @Singleton
 class MovimientoService @Inject()(
-                                 override val repository: MovimientosRepository
+                                 override val repository: MovimientosRepository,
+                                 dependencyRepository: DependencyRepository
                                  )
   extends BaseEntityService[MovimientoTable, Movimientos, MovimientosRepository] {
 
@@ -44,6 +45,14 @@ class MovimientoService @Inject()(
   }
 
   def getInternDocumentsByDocumentId(documentId: String) = {
-    repository.getMovementsByDocumentId(documentId)
+
+    val queryMovements = repository.query
+    val queryDependency = dependencyRepository.query
+
+    val joinMovements = for {
+      (movement, dependencyDestiny) <- queryMovements.filter(x => x.documentosInternosId === documentId) joinLeft queryDependency on (_.dependenciasId1 === _.id)
+    } yield(movement, dependencyDestiny)
+
+    repository.db.run(joinMovements.result)
   }
 }

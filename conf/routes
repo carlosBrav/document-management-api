@@ -29,8 +29,8 @@ POST          /api/documentIntern/office/:officeId/user/:userId   controllers.Do
 POST          /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
 GET           /api/documentIntern/user/:userId          controllers.DocumentInternController.getDocumentsByUserId(userId)
 GET           /api/circularDetails/:documentId          controllers.DocumentInternController.getCircularDetails(documentId)
-PUT           /api/circularEdit/:documentId             controllers.DocumentInternController.editCircularDocument(documentId)
-DELETE        /api/deleteDocument/:documentId           controllers.DocumentInternController.deleteDocumentById(documentId)
+PUT           /api/documentIntern/:documentId           controllers.DocumentInternController.editCircularDocument(documentId)
+DELETE        /api/documentIntern                       controllers.DocumentInternController.deleteDocuments
 #INITIAL
 GET           /api/initialState                         controllers.HomeController.initialState
 

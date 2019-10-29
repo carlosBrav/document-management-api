@@ -10,8 +10,10 @@ import utils.UniqueId
 
 object DocumentInternControllerHelper {
 
-  case class RequestEditCircularDocument(id: Option[String],
-                                         asunto: Option[String],
+  case class RequestDeleteDocuments(documentsIds: Seq[String])
+  implicit val requestDeleteDocumentsFormat: OFormat[RequestDeleteDocuments] = Json.format[RequestDeleteDocuments]
+
+  case class RequestEditCircularDocument(asunto: Option[String],
                                          dependencyId: Option[String])
   implicit val requestEditCircularDocument: OFormat[RequestEditCircularDocument] = Json.format[RequestEditCircularDocument]
 

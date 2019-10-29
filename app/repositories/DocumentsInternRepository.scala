@@ -21,5 +21,9 @@ class DocumentsInternRepository @Inject()(dbConfigProvider: DatabaseConfigProvid
   def loadByDocumentId(documentId: String) = {
     filter(x => x.id === documentId && x.active === true).map(documents => Some(documents.head)) recover { case _: Exception => None }
   }
+
+  def deleteDocuments(documentsId: Seq[String]) = {
+    db.run(query.filter(x => x.id.inSet(documentsId)).map( x => x.active).update(false))
+  }
 }
 

@@ -75,7 +75,7 @@ class DocumentInternController @Inject()(
       .map(documents => {
         JsonOk(
           ResponseCircularDetails(ResponseCodes.SUCCESS, documents.map(document =>
-            toResponseModelMovements(document)))
+            toResponseDetailsMovements(document._1, document._2)))
         )
       }).recover {
       case e =>
@@ -122,6 +122,31 @@ class DocumentInternController @Inject()(
         logger.error(s"Delete a circular by id exception ${t.getMessage}")
         JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Documento no ha podido ser eliminado"))
     }
+  }
+
+  def deleteDocuments : Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestDeleteDocuments].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      documentRequest => {
+        val response = for {
+          _ <- documentInternService.deleteDocuments(documentRequest.documentsIds)
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"Se ha(n) eliminado ${documentRequest.documentsIds.length} documentos")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar eliminar movimientos")
+          )
+        }
+      }
+    )
   }
 }
 

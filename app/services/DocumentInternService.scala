@@ -62,4 +62,8 @@ class DocumentInternService @Inject()(
     repository.db.run(joinResult.result)
   }
 
+  def deleteDocuments(documentsIds: Seq[String]) = {
+    repository.deleteDocuments(documentsIds)
+  }
+
 }

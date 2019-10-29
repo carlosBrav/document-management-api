@@ -10,12 +10,8 @@ import utils.Constants._
 
 
 @Singleton
-class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider)
+class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider, dependencyRepository: DependencyRepository)
     extends BaseEntityRepository[MovimientoTable,Movimientos](dbConfigProvider, TableQuery[MovimientoTable]) {
-
-  def getMovementsByDocumentId(documentId: String) ={
-    filter(x => x.documentosInternosId === documentId)
-  }
 
   def getMovimientos = {
 
