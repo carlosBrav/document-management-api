@@ -16,6 +16,20 @@ class MovimientoService @Inject()(
                                  )
   extends BaseEntityService[MovimientoTable, Movimientos, MovimientosRepository] {
 
+  def loadUserMovementsByOfficeId(officeId: String) = {
+    val queryMovements = repository.query
+    val queryDependency = dependencyRepository.query
+
+    val emptyValue = List("")
+
+    val joinMovements = for{
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.dependenciasId1 === officeId && x.movimiento > 0 && x.fechaIngreso.asColumnOf[Option[java.sql.Timestamp]].isEmpty) joinLeft
+        queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+    } yield (movement, dependencyOrigin, dependencyDestiny)
+
+    repository.db.run(joinMovements.result)
+  }
+
   def saveMovements(movimientos: Seq[Movimientos]) ={
     repository.db.run(repository.saveListQuery(movimientos).transactionally.asTry)
   }

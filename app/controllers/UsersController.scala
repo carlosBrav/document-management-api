@@ -40,6 +40,20 @@ class UsersController @Inject()(
       }
   }
 
+  def loadUserMovementsByOffice(officeId: String) : Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadUserMovementsByOfficeId(officeId)
+      .map(movements =>
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
+      }
+  }
+
   def loadMovementsByTramNum(numTram: String): Action[AnyContent] = Action.async { implicit request =>
 
     movimientoService.loadMovementsByTramNum(numTram)
