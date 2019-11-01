@@ -27,6 +27,7 @@ object ResponseCodes {
 
 object Format {
   val DATE = "yyyy-MM-dd HH:mm:ss"
+  val LOCAL_DATE = "dd/MM/yyyy HH:mm:ss"
 }
 
 object Constants {
@@ -124,9 +125,9 @@ object Constants {
     }
   }
 
-  def convertToDate(s: String): Date = {
+  def convertToDate(s: String, format: String = Format.DATE): Date = {
     if(!s.isEmpty){
-      val dateFormat = new SimpleDateFormat(Format.DATE)
+      val dateFormat = new SimpleDateFormat(format)
       dateFormat.parse(s)
     }else{
       new Date()

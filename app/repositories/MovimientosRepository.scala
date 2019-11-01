@@ -7,6 +7,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import models.{MovimientoTable, Movimientos, Dependencias, DependenciaTable}
 import slick.jdbc.MySQLProfile.api._
 import utils.Constants._
+import utils.Format
 
 
 @Singleton
@@ -61,11 +62,22 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     db.run(joinMovementsDependencies.result)
   }
 
+  def getMovementByAssignedTo(userId: String) = {
+    val queryMovements = TableQuery[MovimientoTable]
+    val queryDependency = TableQuery[DependenciaTable]
+
+    val joinMovementsDependencies = for {
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.asignadoA === userId) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+    } yield (movement, dependencyOrigin, dependencyDestiny)
+
+    db.run(joinMovementsDependencies.result)
+  }
+
 
   def updateFechaIng(documentsIds: Seq[String], userId: String, currentDate: String, asignadoA: String) = {
     db.run(query.filter(x => x.id.inSet(documentsIds))
       .map( x => (x.fechaIngreso, x.fechaModificacion, x.usuarioId, x.asignadoA))
-      .update((new java.sql.Timestamp(convertToDate(currentDate).getTime), new java.sql.Timestamp(new Date().getTime), userId, asignadoA)))
+      .update((new java.sql.Timestamp(convertToDate(currentDate, Format.LOCAL_DATE).getTime), new java.sql.Timestamp(new Date().getTime), userId, asignadoA)))
   }
 
   def deleteMovements(movementsIds: Seq[String]) = {

@@ -5,8 +5,9 @@ import java.io.File
 import javax.inject._
 import play.api._
 import play.api.mvc._
-import services.DependencyService
+import services.{DependencyService, UserService}
 import helpers.HomeControllerHelper._
+import helpers.UsersControllerHelper._
 import play.api.libs.json.Json
 import utils.Constants._
 import utils.Constants.Implicits._
@@ -20,7 +21,9 @@ import scala.concurrent.ExecutionContext
  * application's home page.
  */
 @Singleton
-class HomeController @Inject()(cc: ControllerComponents, dependencyService: DependencyService) extends AbstractController(cc) {
+class HomeController @Inject()(cc: ControllerComponents,
+                               dependencyService: DependencyService,
+                               userService: UserService) extends AbstractController(cc) {
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
   /**
@@ -47,8 +50,15 @@ class HomeController @Inject()(cc: ControllerComponents, dependencyService: Depe
               dependency.tipo.getOrElse("-1"))
           }
       }
+      userResponse <- userService.getAll.map {
+        userList =>
+          userList.map{
+            user => ResponseUser(user.id,user.usuario,user.estado,user.rolId,user.nombre,user.apellido,user.telefono,user.dependenciaId,
+              user.isSubOfficeBoss,user.isOfficeBoss)
+          }
+      }
     } yield JsonOk(
-      InitialStateResponse(ResponseCodes.SUCCESS,"Success",Json.obj("dependencies" -> dependencyResponses))
+      InitialStateResponse(ResponseCodes.SUCCESS,"Success",Json.obj("dependencies" -> dependencyResponses, "users"-> userResponse))
     )
     result recover {
       case ex =>

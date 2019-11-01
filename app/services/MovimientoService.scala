@@ -49,6 +49,10 @@ class MovimientoService @Inject()(
     result
   }
 
+  def loadMovementsByAssignedTo(userId: String) = {
+    repository.getMovementByAssignedTo(userId)
+  }
+
   def updateFechaIngMovements(userId: String, idsMovements: Seq[String], currentDate: String, asignadoA: String): Future[Int] = {
     repository.updateFechaIng(idsMovements, userId, currentDate, asignadoA)
   }

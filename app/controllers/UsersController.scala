@@ -100,7 +100,7 @@ class UsersController @Inject()(
           _ <- movimientoService.updateFechaIngMovements(movementRequest.userId,
             movementRequest.movementsIds, movementRequest.currentDate, movementRequest.asignadoA)
         } yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movementsIds.length} documentos grabados")
+          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movementsIds.length} documentos confirmados")
         )
         response recover {
           case _ => JsonOk(
