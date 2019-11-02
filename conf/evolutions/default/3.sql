@@ -1,10 +1,9 @@
 # --- !Ups
 
 INSERT INTO `ROL`(`id`, `nombre`, `fecha_creacion`, `fecha_modificacion`)
-VALUES ('12345', 'ADMINISTRADOR', '2019-09-14 20:05:45','2019-09-14 20:05:45');
-
-INSERT INTO `ROL`(`id`, `nombre`, `fecha_creacion`, `fecha_modificacion`)
-VALUES ('67899', 'USUARIO', '2019-09-14 20:05:45','2019-09-14 20:05:45');
+VALUES ('12345', 'ADMIN', '2019-09-14 20:05:45','2019-09-14 20:05:45'),
+ ('67899', 'USUARIO', '2019-09-14 20:05:45','2019-09-14 20:05:45'),
+ ('87458', 'ASIGNADOR', '2019-09-14 20:05:45','2019-09-14 20:05:45');
 
 
 Insert into `DEPENDENCIAS` (`ID`, `CODIGO`,`NOMBRE`,`TIPO`,`SIGLAS`,`ESTADO`,`FECHA_CREACION`,`FECHA_MODIFICACION`)
