@@ -25,6 +25,19 @@ class UsersController @Inject()(
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
 
+  def loadMovementsByAssignedTo(userId: String): Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadMovementsByAssignedTo(userId)
+      .map(movements =>
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al listar movimientos del usuario"))
+      }
+  }
 
   def loadMovementsByOffice(officeId: String): Action[AnyContent] = Action.async { implicit request =>
 

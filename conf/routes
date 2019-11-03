@@ -18,6 +18,7 @@ GET           /api/movements/currentDate                controllers.UsersControl
 PUT           /api/movements                            controllers.UsersController.updateDocumentConfirm
 DELETE        /api/movements                            controllers.UsersController.deleteMovements
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
+GET           /api/movements/:userId                    controllers.UsersController.loadMovementsByAssignedTo(userId)
 
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
