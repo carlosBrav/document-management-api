@@ -84,4 +84,11 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     db.run(query.filter(x => x.id.inSet(movementsIds)).delete)
   }
 
+  def saveDerivedDocuments(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) = {
+    db.run(
+      (query.filter(x=> x.id inSet Traversable(oldMovements.reduce(_ ++ _))).map(x=>(x.fechaIngreso,x.asignadoA))
+        .update(new java.sql.Timestamp(new Date().getTime), userId) andThen saveListQuery(newMovements)).transactionally.asTry
+    )
+  }
+
 }

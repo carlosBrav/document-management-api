@@ -5,7 +5,8 @@ import java.util.Date
 import helpers.DocumentInternControllerHelper.RequestResponseModelDocInt
 import models.{Dependencias, DocumentosInternos, Movimientos}
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.convertToString
+import utils.Constants.{convertToString,convertToDate}
+import utils._
 import utils.UniqueId
 
 object MovementsControllerHelper {
@@ -112,10 +113,11 @@ object MovementsControllerHelper {
   implicit val requestUpdateMovementsFormat: OFormat[RequestUpdateMovements] = Json.format[RequestUpdateMovements]
 
   case class RequestModelMovements(
+                                  id: Option[String],
                                movimiento: Option[Int],
                                numTram: Option[String],
                                estadoDocumento: String,
-                               destinyId: String,
+                               dependenciasId1: String,
                                fechaIngreso: Option[String],
                                fechaEnvio: Option[String],
                                observacion: Option[String],
@@ -128,12 +130,12 @@ object MovementsControllerHelper {
 
   implicit val requestMovementsFormat: OFormat[RequestModelMovements] = Json.format[RequestModelMovements]
 
-  case class RequestDeriveMovements(userId: String, officeId: String, movements: Seq[RequestModelMovements]) {
+  case class RequestDeriveMovements(userId: String, officeId: String, currentDate: String, movements: Seq[RequestModelMovements]) {
 
     def toMovementsModel: Seq[Movimientos] = {
       val newMovements = movements.map( move => {
         val movementId = UniqueId.generateId
-        val movement = Movimientos(Some(movementId),Some(move.movimiento.get +1),move.numTram,"DERIVADO",Some(""),move.destinyId,officeId,Some(""),
+        val movement = Movimientos(Some(movementId),Some(move.movimiento.get +1),move.numTram,"EN PROCESO",Some(""),move.dependenciasId1,officeId,Some(""),
           userId,None,Some(new java.sql.Timestamp(new Date().getTime)),move.observacion,move.indiNombre,move.indiCod,
           move.docuNombre, move.docuNum, move.docuSiglas, move.docuAnio,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
@@ -173,7 +175,7 @@ object MovementsControllerHelper {
         movement.numTram,
         "DERIVADO",
         Some(documentInternoId),
-        movement.destinyId,
+        movement.dependenciasId1,
         officeId,
         Some(""),
         userId,None,

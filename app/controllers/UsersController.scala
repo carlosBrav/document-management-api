@@ -124,7 +124,7 @@ class UsersController @Inject()(
     )
   }
 
-  def deriveDocument(userId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def deriveDocument: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[RequestDeriveMovements].fold(
       invalidRequest => {
         val errors =  invalidResponseFormatter(invalidRequest)
@@ -136,9 +136,9 @@ class UsersController @Inject()(
       movementRequest => {
         val newMovements = movementRequest.toMovementsModel
         val response = for {
-          _ <- movimientoService.saveMovements(newMovements)
+          _ <- movimientoService.saveDerivedMovements(movementRequest.userId, movementRequest.movements.map(_.id.get), newMovements)
         } yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos grabados")
+          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos derivados.")
         )
         response recover {
           case _ => JsonOk(
