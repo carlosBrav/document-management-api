@@ -34,6 +34,10 @@ class MovimientoService @Inject()(
     repository.db.run(repository.saveListQuery(movements).transactionally.asTry)
   }
 
+  def saveDerivedAssignedMovements(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) ={
+    repository.saveDerivedAssignedDocuments(userId,oldMovements,newMovements)
+  }
+
   def saveDerivedMovements(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) ={
     repository.saveDerivedDocuments(userId,oldMovements,newMovements)
   }

@@ -149,6 +149,31 @@ class UsersController @Inject()(
     )
   }
 
+  def deriveAssignedDocument: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestDeriveMovements].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val newMovements = movementRequest.toMovementsModel
+        val response = for {
+          _ <- movimientoService.saveDerivedAssignedMovements(movementRequest.userId, movementRequest.movements.map(_.id.get), newMovements)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos derivados.")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
+          )
+        }
+      }
+    )
+  }
+
   def getCorrelativeMax: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[maxCorrelativeRequest].fold(
       invalidRequest => {

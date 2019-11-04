@@ -12,6 +12,7 @@ GET           /api/view2                                controllers.ViewsControl
 
 #MOVEMENTS
 POST          /api/movements/derived                    controllers.UsersController.deriveDocument
+POST          /api/movements/derivedAssigned            controllers.UsersController.deriveAssignedDocument
 GET           /api/movements/office/:officeId           controllers.UsersController.loadMovementsByOffice(officeId)
 GET           /api/movements/user/office/:officeId      controllers.UsersController.loadUserMovementsByOffice(officeId)
 GET           /api/movements/numTram/:numTram           controllers.UsersController.loadMovementsByTramNum(numTram)
