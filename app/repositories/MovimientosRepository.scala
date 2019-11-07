@@ -87,14 +87,14 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
   def saveDerivedAssignedDocuments(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) = {
     db.run(
       (query.filter(x=> x.id inSet Traversable(oldMovements.reduce(_ ++ _))).map(x=>x.estadoDocumento)
-        .update("Derivado") andThen saveListQuery(newMovements)).transactionally.asTry
+        .update("DERIVADO") andThen saveListQuery(newMovements)).transactionally.asTry
     )
   }
 
   def saveDerivedDocuments(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) = {
     db.run(
       (query.filter(x=> x.id inSet Traversable(oldMovements.reduce(_ ++ _))).map(x=>(x.fechaIngreso,x.asignadoA, x.estadoDocumento))
-        .update(new java.sql.Timestamp(new Date().getTime), userId, "Derivado") andThen saveListQuery(newMovements)).transactionally.asTry
+        .update(new java.sql.Timestamp(new Date().getTime), userId, "DERIVADO") andThen saveListQuery(newMovements)).transactionally.asTry
     )
   }
 

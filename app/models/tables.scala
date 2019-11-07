@@ -57,7 +57,7 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
 
   def * =
     (id.?,movimiento.?,numTram.?,estadoDocumento,documentosInternosId.?,dependenciasId,dependenciasId1,
-      asignadoA.?,usuarioId,fechaIngreso.?,fechaEnvio.?,observacion.?,indiCod.?, indiNombre.?, docuNombre.?,
+      asignadoA.?,usuarioId,fechaIngreso.?,fechaEnvio.?,observacion.?,indiNombre.?, indiCod.?, docuNombre.?,
       docuNum.?, docuSiglas.?, docuAnio.?, fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
 }
