@@ -28,7 +28,8 @@ object DocumentInternControllerHelper {
                                         dependenciaId: String,
                                         userId: Option[String],
                                         firma: Option[String],
-                                        active: Boolean)
+                                        active: Boolean,
+                                        currentDate: Option[String])
   implicit val requestResponseModelDocIntFormat: OFormat[RequestResponseModelDocInt] =
     Json.format[RequestResponseModelDocInt]
 

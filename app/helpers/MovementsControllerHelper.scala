@@ -112,21 +112,21 @@ object MovementsControllerHelper {
   case class RequestUpdateMovements(userId: String, movementsIds: Seq[String], currentDate: String, asignadoA: String)
   implicit val requestUpdateMovementsFormat: OFormat[RequestUpdateMovements] = Json.format[RequestUpdateMovements]
 
-  case class RequestModelMovements(
-                                  id: Option[String],
-                               movimiento: Option[Int],
-                               numTram: Option[String],
-                               estadoDocumento: String,
-                               dependenciasId1: String,
-                               fechaIngreso: Option[String],
-                               fechaEnvio: Option[String],
-                               observacion: Option[String],
-                               indiNombre: Option[String],
-                               indiCod: Option[String],
-                               docuNombre: Option[String],
-                               docuNum: Option[String],
-                               docuSiglas: Option[String],
-                               docuAnio: Option[String])
+  case class RequestModelMovements(id: Option[String],
+                                   movimiento: Option[Int],
+                                   numTram: Option[String],
+                                   estadoDocumento: String,
+                                   dependenciasId1: String,
+                                   fechaIngreso: Option[String],
+                                   fechaEnvio: Option[String],
+                                   observacion: Option[String],
+                                   indiNombre: Option[String],
+                                   indiCod: Option[String],
+                                   docuNombre: Option[String],
+                                   docuNum: Option[String],
+                                   docuSiglas: Option[String],
+                                   docuAnio: Option[String],
+                                   currentDate: Option[String])
 
   implicit val requestMovementsFormat: OFormat[RequestModelMovements] = Json.format[RequestModelMovements]
 
@@ -147,34 +147,34 @@ object MovementsControllerHelper {
 
   implicit val requestDeriveMovements: OFormat[RequestDeriveMovements] = Json.format[RequestDeriveMovements]
 
-  case class RequestResponseToMovements(documentoInterno: RequestResponseModelDocInt,
+  case class RequestResponseToMovements(documentIntern: RequestResponseModelDocInt,
                                         movement: RequestModelMovements) {
 
     def toMovementModel(userId: String, officeId: String): (DocumentosInternos, Movimientos) = {
 
 
-      val documentInternoId = UniqueId.generateId
-      val newDocumentIntern = DocumentosInternos(Some(documentInternoId),
-        documentoInterno.estadoDocumento,
-        documentoInterno.tipoDocuId,
-        documentoInterno.numDocumento,
-        documentoInterno.siglas,
-        documentoInterno.anio,
-        documentoInterno.asunto,
-        documentoInterno.observacion,
-        documentoInterno.dependenciaId,
-        documentoInterno.active,
-        documentoInterno.userId,
-        documentoInterno.firma,
-        Some(new java.sql.Timestamp(new Date().getTime)),
-        Some(new java.sql.Timestamp(new Date().getTime)))
+      val documentInternId = UniqueId.generateId
+      val newDocumentIntern = DocumentosInternos(Some(documentInternId),
+        documentIntern.estadoDocumento,
+        documentIntern.tipoDocuId,
+        documentIntern.numDocumento,
+        documentIntern.siglas,
+        documentIntern.anio,
+        documentIntern.asunto,
+        documentIntern.observacion,
+        documentIntern.dependenciaId,
+        documentIntern.active,
+        documentIntern.userId,
+        documentIntern.firma,
+        Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)),
+        Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)))
 
       val movementId = UniqueId.generateId
       val newMovement = Movimientos(Some(movementId),
         Some(movement.movimiento.get +1),
         movement.numTram,
         "DERIVADO",
-        Some(documentInternoId),
+        Some(documentInternId),
         movement.dependenciasId1,
         officeId,
         Some(""),
@@ -187,7 +187,8 @@ object MovementsControllerHelper {
         movement.docuNum,
         movement.docuSiglas,
         movement.docuAnio,
-        Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
+        Some(new java.sql.Timestamp(convertToDate(movement.currentDate.get, Format.LOCAL_DATE).getTime)),
+        Some(new java.sql.Timestamp(convertToDate(movement.currentDate.get, Format.LOCAL_DATE).getTime)))
       (newDocumentIntern,newMovement)
     }
   }

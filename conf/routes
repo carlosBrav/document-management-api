@@ -21,6 +21,7 @@ PUT           /api/movements                            controllers.UsersControl
 DELETE        /api/movements                            controllers.UsersController.deleteMovements
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 GET           /api/movements/:userId                    controllers.UsersController.loadMovementsByAssignedTo(userId)
+POST          /api/movements/user/:userId/office/:officeId      controllers.UsersController.generateResponseToMovements(userId,officeId)
 
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
