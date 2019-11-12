@@ -30,6 +30,11 @@ object Format {
   val LOCAL_DATE = "dd/MM/yyyy HH:mm:ss"
 }
 
+object STATUS {
+  val IN_PROCESS = "EN PROCESO"
+  val DERIVED = "DERIVADO"
+}
+
 object Constants {
 
   def JsonOk[T](t: T)(implicit writes: Writes[T]): Result = Ok(Json.toJson(t))

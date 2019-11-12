@@ -221,6 +221,7 @@ class UsersController @Inject()(
         val (newDocumentIntern, newMovement) = movementRequest.toMovementModel(userId,officeId)
         val response = for {
           _ <- documentService.generateResponseToMovement(newDocumentIntern, newMovement)
+          _ <- movimientoService.updateStatusToMovement(movementRequest.movement.id.get)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
             s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")

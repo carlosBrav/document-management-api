@@ -7,6 +7,7 @@ import play.api.db.slick.DatabaseConfigProvider
 import models.{MovimientoTable, Movimientos, Dependencias, DependenciaTable}
 import slick.jdbc.MySQLProfile.api._
 import utils.Constants._
+import utils.STATUS
 import utils.Format
 
 
@@ -67,7 +68,7 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     val queryDependency = TableQuery[DependenciaTable]
 
     val joinMovementsDependencies = for {
-      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.asignadoA === userId) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.asignadoA === userId && x.estadoDocumento === STATUS.IN_PROCESS) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
     } yield (movement, dependencyOrigin, dependencyDestiny)
 
     db.run(joinMovementsDependencies.result)
@@ -78,6 +79,10 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     db.run(query.filter(x => x.id.inSet(documentsIds))
       .map( x => (x.fechaIngreso, x.fechaModificacion, x.usuarioId, x.asignadoA))
       .update((new java.sql.Timestamp(convertToDate(currentDate, Format.LOCAL_DATE).getTime), new java.sql.Timestamp(new Date().getTime), userId, asignadoA)))
+  }
+
+  def updateStatusMovement(movementId: String) = {
+    db.run(query.filter(x=> x.id === movementId).map(x=>x.estadoDocumento).update("DERIVADO"))
   }
 
   def deleteMovements(movementsIds: Seq[String]) = {
