@@ -11,7 +11,7 @@ import scala.util.Try
 import scala.concurrent.ExecutionContext.Implicits.global
 
 @Singleton
-class DocumentInternService @Inject()(
+class InternDocumentService @Inject()(
                                  override val repository: DocumentsInternRepository,
                                  movementsRepository: MovimientosRepository,
                                  dependencyRepository: DependencyRepository,
@@ -50,14 +50,15 @@ class DocumentInternService @Inject()(
     val typeDocumentQuery = typeDocumentRepository.query
     val dependencyQuery = dependencyRepository.query
     val userQuery = userRepository.query
+    val movementQuery = movementsRepository.query
     val documentQuery = repository.query
 
     val joinResult = for {
-      (((document, typeDocument), dependency), user)
+      ((((document, typeDocument), dependency), user),movement)
         <- documentQuery
         .sortBy(_.fechaCreacion.desc)
-        .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id) joinLeft userQuery on (_._1._1.userId === _.id)
-    } yield(document, typeDocument, dependency, user)
+        .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id) joinLeft userQuery on (_._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1.id === _.documentosInternosId)
+    } yield(document, typeDocument, dependency, user, movement)
 
     repository.db.run(joinResult.result)
   }

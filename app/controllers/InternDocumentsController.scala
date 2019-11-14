@@ -4,7 +4,7 @@ import helpers.AuthControllerHelper.RequestLogin
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc._
-import services.DocumentInternService
+import services.InternDocumentService
 import services.MovimientoService
 import utils.Constants._
 import utils.Constants.Implicits._
@@ -18,10 +18,10 @@ import utils.{Constants, ResponseCodes}
 
 import scala.util.{Failure, Success}
 
-class DocumentInternController @Inject()(
-                                        documentInternService: DocumentInternService,
-                                        movementService: MovimientoService,
-                                        cc: ControllerComponents
+class InternDocumentsController @Inject()(
+                                           documentInternService: InternDocumentService,
+                                           movementService: MovimientoService,
+                                           cc: ControllerComponents
                                         )extends AbstractController(cc) {
 
   implicit val ec: ExecutionContext = defaultExecutionContext
@@ -60,7 +60,7 @@ class DocumentInternController @Inject()(
         JsonOk(
           ResponseDocumentsInternsByUserId(ResponseCodes.SUCCESS,
             documents.map(value =>
-            toResponseDocumentsInterns(Some(""), Some(""), Some(value._1),value._2,value._3, value._4)))
+            toResponseDocumentsInterns(Some(""), Some(""), Some(value._1),value._2,value._3, value._4, value._5)))
         )
       ).recover {
       case e =>

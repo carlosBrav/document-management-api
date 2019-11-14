@@ -65,6 +65,8 @@ object DocumentInternControllerHelper {
                                        firma: Option[String],
                                        fechaCreacion: Option[String],
                                        fechaModificacion: Option[String],
+                                       movementId: Option[String],
+                                       numTram: Option[String]
                                      )
   implicit val responseDocumentsInternsFormat: OFormat[ResponseDocumentsInterns] = Json.format[ResponseDocumentsInterns]
 
@@ -73,17 +75,20 @@ object DocumentInternControllerHelper {
                                  documents: Option[DocumentosInternos],
                                  typeDocument: Option[TipoDocumento],
                                  dependency: Option[Dependencias],
-                                 user: Option[Usuario]) : ResponseDocumentsInterns = {
+                                 user: Option[Usuario],
+                                 movement: Option[Movimientos]) : ResponseDocumentsInterns = {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
       Some(""),Some(""),"",true,Some(""),Some(""),None,None))
 
+    val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
+
     val response = ResponseDocumentsInterns(document.id,
       document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,document.anio,
       document.asunto, document.observacion,document.dependenciaId,Some(dependency.get.nombre),document.active, document.userId,
       Some(user.get.nombre), Some(user.get.apellido), document.firma,
-      Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)))
+      Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)), move.id,move.numTram)
     response
   }
 

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc._
-import services.{DocumentInternService, MovimientoService, UserService}
+import services.{InternDocumentService, MovimientoService, UserService}
 
 import scala.concurrent.{ExecutionContext, Future}
 import utils.Constants._
@@ -18,7 +18,7 @@ import scala.util.Success
 class UsersController @Inject()(
                                  userService: UserService,
                                  movimientoService: MovimientoService,
-                                 documentService: DocumentInternService,
+                                 documentService: InternDocumentService,
                                  cc: ControllerComponents
                                )extends AbstractController(cc){
 
