@@ -60,7 +60,7 @@ class InternDocumentsController @Inject()(
         JsonOk(
           ResponseDocumentsInternsByUserId(ResponseCodes.SUCCESS,
             documents.map(value =>
-            toResponseDocumentsInterns(Some(""), Some(""), Some(value._1),value._2,value._3, value._4, value._5)))
+            toResponseDocumentsInterns(Some(""), Some(""), Some(value._1),value._2,value._3, value._4, value._5,value._6)))
         )
       ).recover {
       case e =>
@@ -96,7 +96,7 @@ class InternDocumentsController @Inject()(
       editRequest => {
         val result = for {
           Success(document) <- documentInternService.loadById(documentId)
-          newDocument = document.get.copy(asunto = editRequest.asunto,dependenciaId = editRequest.dependencyId.get)
+          newDocument = document.get.copy(asunto = editRequest.asunto,origenId = editRequest.dependencyId.get)
           _ <- Future.successful(documentInternService.updateById(documentId, newDocument))
         }yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "Success", "Documento actualizado correctamente")

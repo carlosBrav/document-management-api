@@ -54,11 +54,11 @@ class InternDocumentService @Inject()(
     val documentQuery = repository.query
 
     val joinResult = for {
-      ((((document, typeDocument), dependency), user),movement)
+      (((((document, typeDocument), dependency), dependencyDestiny), user),movement)
         <- documentQuery
         .sortBy(_.fechaCreacion.desc)
-        .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id) joinLeft userQuery on (_._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1.id === _.documentosInternosId)
-    } yield(document, typeDocument, dependency, user, movement)
+        .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id) joinLeft userQuery on (_._1._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1._1.id === _.documentosInternosId)
+    } yield(document, typeDocument, dependency, dependencyDestiny, user, movement)
 
     repository.db.run(joinResult.result)
   }

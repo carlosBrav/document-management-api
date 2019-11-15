@@ -40,26 +40,26 @@ object MovementsControllerHelper {
   case class ResponseMovements(responseCode: Int, responseMessage: String, data: Seq[ResponseModelMovements])
   implicit val responseMovementsFormat: OFormat[ResponseMovements] = Json.format[ResponseMovements]
 
-  def toResponseDetailsMovements(movimiento: Movimientos, dependencyDestiny: Option[Dependencias]) = {
-    val response = ResponseModelMovements(movimiento.id,
-      movimiento.movimiento,
-      movimiento.numTram,
-      movimiento.estadoDocumento,
-      movimiento.documentosInternosId,
-      Some(movimiento.dependenciasId),
+  def toResponseDetailsMovements(movement: Movimientos, dependencyDestiny: Option[Dependencias]) = {
+    val response = ResponseModelMovements(movement.id,
+      movement.movimiento,
+      movement.numTram,
+      movement.estadoDocumento,
+      movement.documentosInternosId,
+      Some(movement.dependenciasId),
       Some(""),
-      Some(movimiento.dependenciasId1),
+      Some(movement.dependenciasId1),
       Some(dependencyDestiny.get.nombre),
-      movimiento.asignadoA,
-      movimiento.usuarioId,
-      Option(convertToString(movimiento.fechaIngreso)),
-      Option(convertToString(movimiento.fechaEnvio)),
-      movimiento.observacion,movimiento.indiNombre,
-      movimiento.indiCod,
-      movimiento.docuNombre.getOrElse(""),
-      movimiento.docuNum.getOrElse(""),
-      movimiento.docuSiglas.getOrElse(""),
-      movimiento.docuAnio.getOrElse(""))
+      movement.asignadoA,
+      movement.usuarioId,
+      Option(convertToString(movement.fechaIngreso)),
+      Option(convertToString(movement.fechaEnvio)),
+      movement.observacion,movement.indiNombre,
+      movement.indiCod,
+      movement.docuNombre.getOrElse(""),
+      movement.docuNum.getOrElse(""),
+      movement.docuSiglas.getOrElse(""),
+      movement.docuAnio.getOrElse(""))
     response
   }
 
@@ -162,7 +162,8 @@ object MovementsControllerHelper {
         documentIntern.anio,
         documentIntern.asunto,
         documentIntern.observacion,
-        documentIntern.dependenciaId,
+        documentIntern.origenId,
+        documentIntern.destinoId,
         documentIntern.active,
         documentIntern.userId,
         documentIntern.firma,

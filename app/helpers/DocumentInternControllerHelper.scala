@@ -25,7 +25,8 @@ object DocumentInternControllerHelper {
                                         anio: Option[String],
                                         observacion: Option[String],
                                         asunto: Option[String],
-                                        dependenciaId: String,
+                                        origenId: String,
+                                        destinoId: Option[String],
                                         userId: Option[String],
                                         firma: Option[String],
                                         active: Boolean,
@@ -39,7 +40,8 @@ object DocumentInternControllerHelper {
                                              siglas: Option[String],
                                              anio: Option[String],
                                              asunto: Option[String],
-                                             dependenciaId: String,
+                                             origenId: String,
+                                             destinoId: Option[String],
                                              userId: Option[String],
                                              firma: Option[String])
 
@@ -56,8 +58,10 @@ object DocumentInternControllerHelper {
                                        anio: Option[String],
                                        asunto: Option[String],
                                        observacion: Option[String],
-                                       dependenciaId: String,
-                                       dependencyName: Option[String],
+                                       origenId: String,
+                                       origenName: Option[String],
+                                       destinoId: Option[String],
+                                       destinoName: Option[String],
                                        active: Boolean,
                                        userId: Option[String],
                                        userName: Option[String],
@@ -75,18 +79,21 @@ object DocumentInternControllerHelper {
                                  documents: Option[DocumentosInternos],
                                  typeDocument: Option[TipoDocumento],
                                  dependency: Option[Dependencias],
+                                 dependencyDestiny: Option[Dependencias],
                                  user: Option[Usuario],
                                  movement: Option[Movimientos]) : ResponseDocumentsInterns = {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",true,Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),None,None))
 
     val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
+    val dependencyDest = dependencyDestiny.getOrElse(Dependencias(Some(""),"",false,Some(""),"",Some(""),None,None))
+
     val response = ResponseDocumentsInterns(document.id,
       document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,document.anio,
-      document.asunto, document.observacion,document.dependenciaId,Some(dependency.get.nombre),document.active, document.userId,
+      document.asunto, document.observacion,document.origenId,Some(dependency.get.nombre),document.destinoId,Some(dependencyDest.nombre),document.active, document.userId,
       Some(user.get.nombre), Some(user.get.apellido), document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)), move.id,move.numTram)
     response
@@ -110,7 +117,8 @@ object DocumentInternControllerHelper {
         documentIntern.anio,
         documentIntern.asunto,
         Some(""),
-        documentIntern.dependenciaId,
+        documentIntern.origenId,
+        documentIntern.destinoId,
         true,
         documentIntern.userId,
         documentIntern.firma,

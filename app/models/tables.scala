@@ -89,11 +89,12 @@ class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos
   def anio = column[String]("ANIO")
   def asunto = column[String]("ASUNTO")
   def observacion = column[String]("OBSERVACION")
-  def dependenciaId = column[String]("DEPENDENCIA_ID")
+  def origenId = column[String]("ORIGEN_ID")
+  def destinoId = column[String]("DESTINO_ID")
   def active = column[Boolean]("ACTIVE")
   def userId = column[String]("USER_ID")
   def firma = column[String]("FIRMA")
-  def * = (id.?, estadoDocumento.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,dependenciaId,active,
+  def * = (id.?, estadoDocumento.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,origenId, destinoId.?,active,
     userId.?, firma.?,fechaCreacion.?, fechaModificacion.?) <>
     (DocumentosInternos.tupled, DocumentosInternos.unapply)
 }
