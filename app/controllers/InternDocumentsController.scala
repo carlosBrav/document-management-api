@@ -110,20 +110,6 @@ class InternDocumentsController @Inject()(
     )
   }
 
-  def deleteDocumentById(documentId: String): Action[AnyContent] = Action.async { implicit request =>
-    val result: Future[Result] = for {
-      Success(document) <- documentInternService.loadById(documentId)
-      _ <- Future.successful(documentInternService.updateById(document.get.id.get, document.get.copy(active = false)))
-    } yield JsonOk(
-      ResponseError[String](ResponseCodes.SUCCESS, s"Documento eliminado correctamente")
-    )
-    result recover {
-      case t: Throwable =>
-        logger.error(s"Delete a circular by id exception ${t.getMessage}")
-        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Documento no ha podido ser eliminado"))
-    }
-  }
-
   def deleteDocuments : Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[RequestDeleteDocuments].fold(
       invalidRequest => {
@@ -139,6 +125,45 @@ class InternDocumentsController @Inject()(
         }yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
             s"Se ha(n) eliminado ${documentRequest.documentsIds.length} documentos")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar eliminar movimientos")
+          )
+        }
+      }
+    )
+  }
+
+  def deleteDocumentById(documentId: String): Action[AnyContent] = Action.async { implicit request =>
+    val result: Future[Result] = for {
+      _ <- Future.successful(documentInternService.deleteById(documentId))
+    } yield JsonOk(
+      ResponseError[String](ResponseCodes.SUCCESS, s"Documento eliminado correctamente")
+    )
+    result recover {
+      case t: Throwable =>
+        logger.error(s"Delete a document by id exception ${t.getMessage}")
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Documento no ha podido ser eliminado"))
+    }
+  }
+
+  def createInternDocument: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestCreateInternDocument].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      internDocumentRequest => {
+        val newInternDocument = internDocumentRequest.toInternDocument
+        val response = for {
+          _ <- documentInternService.save(newInternDocument)
+        }yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"Se ha creado el documento correctamente")
         )
         response recover {
           case _ => JsonOk(

@@ -30,12 +30,13 @@ GET           /api/typeDocuments                        controllers.TypeDocument
 GET           /api/userBossOffice                       controllers.UsersController.getOfficeBoss
 
 #DOCUMENT INTERN
-POST          /api/documentIntern/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)
+POST          /api/internDocument/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)
 POST          /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
-GET           /api/documentIntern/user/:userId          controllers.InternDocumentsController.getDocumentsByUserId(userId)
+GET           /api/internDocument/user/:userId          controllers.InternDocumentsController.getDocumentsByUserId(userId)
 GET           /api/circularDetails/:documentId          controllers.InternDocumentsController.getCircularDetails(documentId)
-PUT           /api/documentIntern/:documentId           controllers.InternDocumentsController.editCircularDocument(documentId)
-DELETE        /api/documentIntern                       controllers.InternDocumentsController.deleteDocuments
+PUT           /api/internDocument/:documentId           controllers.InternDocumentsController.editCircularDocument(documentId)
+DELETE        /api/internDocument                       controllers.InternDocumentsController.deleteDocuments
+POST          /api/internDocument                       controllers.InternDocumentsController.createInternDocument
 #INITIAL
 GET           /api/initialState                         controllers.HomeController.initialState
 
