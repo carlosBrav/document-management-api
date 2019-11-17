@@ -14,7 +14,7 @@ object DocumentInternControllerHelper {
   implicit val requestDeleteDocumentsFormat: OFormat[RequestDeleteDocuments] = Json.format[RequestDeleteDocuments]
 
   case class RequestEditCircularDocument(asunto: Option[String],
-                                         dependencyId: Option[String])
+                                         origenId: Option[String])
   implicit val requestEditCircularDocument: OFormat[RequestEditCircularDocument] = Json.format[RequestEditCircularDocument]
 
   case class RequestResponseModelDocInt(
@@ -75,6 +75,46 @@ object DocumentInternControllerHelper {
                                        numTram: Option[String]
                                      )
   implicit val responseDocumentsInternsFormat: OFormat[ResponseDocumentsInterns] = Json.format[ResponseDocumentsInterns]
+
+  case class ResponseCircularDocument(
+                                       id: Option[String],
+                                       estado: Option[String],
+                                       tipoDocuId: String,
+                                       documentName: Option[String],
+                                       numDocumento: Option[String],
+                                       siglas: Option[String],
+                                       anio: Option[String],
+                                       asunto: Option[String],
+                                       observacion: Option[String],
+                                       origenId: String,
+                                       origenName: Option[String],
+                                       active: Boolean,
+                                       userId: Option[String],
+                                       userName: Option[String],
+                                       userLastName: Option[String],
+                                       firma: Option[String],
+                                       fechaCreacion: Option[String]
+                                     )
+  implicit val responseCircularDocument: OFormat[ResponseCircularDocument] = Json.format[ResponseCircularDocument]
+
+  def toResponseCircularDocument(documents: Option[DocumentosInternos],
+                                 typeDocument: Option[TipoDocumento],
+                                 dependency: Option[Dependencias],
+                                 user: Option[Usuario]) : ResponseCircularDocument = {
+
+    val document = documents.getOrElse(DocumentosInternos(Some(""),
+      Some(""), "",Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
+      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),None,None))
+
+    val response = ResponseCircularDocument(document.id,document.estadoDocumento,document.tipoDocuId,Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),
+      document.siglas,document.anio, document.asunto,document.observacion,dependency.get.id.get,Some(dependency.get.nombre),document.active,document.userId,Some(user.get.nombre), Some(user.get.apellido), document.firma,
+      Some(convertToString(document.fechaCreacion))
+    )
+    response
+  }
+
+  case class ResponseCircularDocumentsByUserId(responseCode: Int, data: Seq[ResponseCircularDocument])
+  implicit val responseCircularDocumentsByUserId: OFormat[ResponseCircularDocumentsByUserId] = Json.format[ResponseCircularDocumentsByUserId]
 
   def toResponseDocumentsInterns(tipoDocuId: Option[String],
                                  siglas: Option[String],

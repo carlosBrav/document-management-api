@@ -23,7 +23,14 @@ class DocumentsInternRepository @Inject()(dbConfigProvider: DatabaseConfigProvid
   }
 
   def deleteDocuments(documentsId: Seq[String]) = {
-    db.run(query.filter(x => x.id.inSet(documentsId)).map( x => x.active).update(false))
+
+    val docIntQuery = query
+    val moveQuery = movementRepository.query
+
+
+    db.run(
+      docIntQuery.filter(x => x.id.inSet(documentsId)).delete andThen moveQuery.filter(x=>x.documentosInternosId.inSet(documentsId)).delete
+    )
   }
 }
 

@@ -63,6 +63,22 @@ class InternDocumentService @Inject()(
     repository.db.run(joinResult.result)
   }
 
+  def getCircularDocuments(userId: String) = {
+    val typeDocumentQuery = typeDocumentRepository.query
+    val dependencyQuery = dependencyRepository.query
+    val userQuery = userRepository.query
+    val documentQuery = repository.query
+
+    val joinResult = for {
+      (((document, typeDocument), dependency), user)
+        <- documentQuery
+        .sortBy(_.fechaCreacion.desc)
+        .filter(x => x.userId === userId && x.tipoDocuId.inSet(List("54545","74545"))) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft userQuery on (_._1._1.userId === _.id)
+    } yield(document, typeDocument, dependency, user)
+
+    repository.db.run(joinResult.result)
+  }
+
   def deleteDocuments(documentsIds: Seq[String]) = {
     repository.deleteDocuments(documentsIds)
   }

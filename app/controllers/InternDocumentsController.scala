@@ -65,6 +65,21 @@ class InternDocumentsController @Inject()(
       ).recover {
       case e =>
         logger.error("error loading circular documents: " + e.getMessage)
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los documentos internos"))
+    }
+  }
+
+  def getCircularDocumentsByUserId(userId: String): Action[AnyContent] = Action.async { implicit request =>
+    documentInternService.getCircularDocuments(userId)
+      .map(documents =>
+        JsonOk(
+          ResponseCircularDocumentsByUserId(ResponseCodes.SUCCESS,
+            documents.map(value =>
+              toResponseCircularDocument(Some(value._1),value._2,value._3,value._4)))
+        )
+      ).recover {
+      case e =>
+        logger.error("error loading circular documents: " + e.getMessage)
         JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los documentos circulares"))
     }
   }
@@ -96,7 +111,7 @@ class InternDocumentsController @Inject()(
       editRequest => {
         val result = for {
           Success(document) <- documentInternService.loadById(documentId)
-          newDocument = document.get.copy(asunto = editRequest.asunto,origenId = editRequest.dependencyId.get)
+          newDocument = document.get.copy(asunto = editRequest.asunto,origenId = editRequest.origenId.get)
           _ <- Future.successful(documentInternService.updateById(documentId, newDocument))
         }yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "Success", "Documento actualizado correctamente")
