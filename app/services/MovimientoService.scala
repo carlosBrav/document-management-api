@@ -20,8 +20,6 @@ class MovimientoService @Inject()(
     val queryMovements = repository.query
     val queryDependency = dependencyRepository.query
 
-    val emptyValue = List("")
-
     val joinMovements = for{
       ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.dependenciasId1 === officeId && x.movimiento > 0 && x.fechaIngreso.asColumnOf[Option[java.sql.Timestamp]].isEmpty) joinLeft
         queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
@@ -67,6 +65,10 @@ class MovimientoService @Inject()(
 
   def updateStatusToMovement(movementId: String) = {
     repository.updateStatusMovement(movementId)
+  }
+
+  def updateStatusToMovementAdmin(movementId: String) = {
+    repository.updateStatusMovementAdmin(movementId)
   }
 
   def deleteMovement(movementsIds: Seq[String]) = {

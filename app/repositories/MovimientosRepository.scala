@@ -85,6 +85,10 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     db.run(query.filter(x=> x.id === movementId).map(x=>x.estadoDocumento).update("DERIVADO"))
   }
 
+  def updateStatusMovementAdmin(movementId: String) = {
+    db.run(query.filter(x=> x.id === movementId).map(x=>(x.estadoDocumento, x.fechaIngreso, x.fechaModificacion)).update(("DERIVADO", new java.sql.Timestamp(new Date().getTime),new java.sql.Timestamp(new Date().getTime))))
+  }
+
   def deleteMovements(movementsIds: Seq[String]) = {
     db.run(query.filter(x => x.id.inSet(movementsIds)).delete)
   }

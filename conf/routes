@@ -22,6 +22,7 @@ DELETE        /api/movements                            controllers.UsersControl
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
 GET           /api/movements/:userId                    controllers.UsersController.loadMovementsByAssignedTo(userId)
 POST          /api/movements/user/:userId/office/:officeId      controllers.UsersController.generateResponseToMovements(userId,officeId)
+POST          /api/movements/admin/:userId/office/:officeId      controllers.UsersController.generateResponseToMovementsAdmin(userId,officeId)
 
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
@@ -33,6 +34,7 @@ GET           /api/userBossOffice                       controllers.UsersControl
 POST          /api/internDocument/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)
 POST          /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
 GET           /api/internDocument/user/:userId          controllers.InternDocumentsController.getDocumentsByUserId(userId)
+GET           /api/internDocument/office/:officeId/documentId/:documentId      controllers.InternDocumentsController.getDocumentsByOfficeId(documentId,officeId)
 GET           /api/internDocument/circulars/:userId     controllers.InternDocumentsController.getCircularDocumentsByUserId(userId)
 GET           /api/circularDetails/:documentId          controllers.InternDocumentsController.getCircularDetails(documentId)
 PUT           /api/internDocument/:documentId           controllers.InternDocumentsController.editCircularDocument(documentId)

@@ -69,6 +69,21 @@ class InternDocumentsController @Inject()(
     }
   }
 
+  def getDocumentsByOfficeId(typeDocumentId: String, officeId: String): Action[AnyContent] = Action.async { implicit request =>
+    documentInternService.getInternDocumentsByOfficeId(typeDocumentId,officeId)
+      .map(documents =>
+        JsonOk(
+          ResponseDocumentsInternsByUserId(ResponseCodes.SUCCESS,
+            documents.map(value =>
+              toResponseDocumentsInterns(Some(""), Some(""), Some(value._1),value._2,value._3, value._4, value._5,value._6)))
+        )
+      ).recover {
+      case e =>
+        logger.error("error loading circular documents: " + e.getMessage)
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los documentos internos"))
+    }
+  }
+
   def getCircularDocumentsByUserId(userId: String): Action[AnyContent] = Action.async { implicit request =>
     documentInternService.getCircularDocuments(userId)
       .map(documents =>

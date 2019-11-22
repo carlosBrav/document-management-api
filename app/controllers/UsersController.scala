@@ -235,6 +235,33 @@ class UsersController @Inject()(
     )
   }
 
+  def generateResponseToMovementsAdmin(userId: String, officeId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestResponseToMovements].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      movementRequest => {
+        val (newDocumentIntern, newMovement) = movementRequest.toMovementModel(userId,officeId)
+        val response = for {
+          _ <- documentService.generateResponseToMovement(newDocumentIntern, newMovement)
+          _ <- movimientoService.updateStatusToMovementAdmin(movementRequest.movement.id.get)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")
+        )
+        response recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
+          )
+        }
+      }
+    )
+  }
+
   def deleteDocumentIntern(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     val result: Future[Result] = for {
       Success(document) <- documentService.loadById(documentId)
