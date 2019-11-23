@@ -56,11 +56,10 @@ class InternDocumentService @Inject()(
     val joinResult = for {
       (((((document, typeDocument), dependency), dependencyDestiny), user),movement)
         <- documentQuery
-        .sortBy(_.fechaCreacion.desc)
         .filter(x => x.userId === userId && x.active === true) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id) joinLeft userQuery on (_._1._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1._1.id === _.documentosInternosId)
     } yield(document, typeDocument, dependency, dependencyDestiny, user, movement)
 
-    repository.db.run(joinResult.result)
+    repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
   }
 
   def getInternDocumentsByOfficeId(typeDocumentId: String, officeId: String) = {
@@ -74,11 +73,10 @@ class InternDocumentService @Inject()(
     val joinResult = for {
       (((((document, typeDocument), dependency), dependencyDestiny), user),movement)
         <- documentQuery
-        .sortBy(_.fechaCreacion.desc)
         .filter(x => x.origenId === officeId && x.tipoDocuId===typeDocumentId) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id) joinLeft userQuery on (_._1._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1._1.id === _.documentosInternosId)
     } yield(document, typeDocument, dependency, dependencyDestiny, user, movement)
 
-    repository.db.run(joinResult.result)
+    repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
   }
 
   def getCircularDocuments(userId: String) = {
@@ -90,11 +88,10 @@ class InternDocumentService @Inject()(
     val joinResult = for {
       (((document, typeDocument), dependency), user)
         <- documentQuery
-        .sortBy(_.fechaCreacion.desc)
         .filter(x => x.userId === userId && x.tipoDocuId.inSet(List("54545","74545"))) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft userQuery on (_._1._1.userId === _.id)
     } yield(document, typeDocument, dependency, user)
 
-    repository.db.run(joinResult.result)
+    repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
   }
 
   def deleteDocuments(documentsIds: Seq[String]) = {

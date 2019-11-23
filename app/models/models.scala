@@ -82,6 +82,7 @@ case class DocumentosInternos(id: Option[String],
                               active: Boolean,
                               userId: Option[String],
                               firma: Option[String],
+                              responsableArea: Option[String],
                               fechaCreacion: Option[Timestamp],
                               fechaModificacion: Option[Timestamp],
                              ) extends BaseEntity

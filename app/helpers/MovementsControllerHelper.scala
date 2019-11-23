@@ -167,6 +167,7 @@ object MovementsControllerHelper {
         documentIntern.active,
         documentIntern.userId,
         documentIntern.firma,
+        documentIntern.responsableArea,
         Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)))
 

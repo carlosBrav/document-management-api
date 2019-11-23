@@ -29,6 +29,7 @@ object DocumentInternControllerHelper {
                                         destinoId: Option[String],
                                         userId: Option[String],
                                         firma: Option[String],
+                                        responsableArea: Option[String],
                                         active: Boolean,
                                         currentDate: Option[String])
   implicit val requestResponseModelDocIntFormat: OFormat[RequestResponseModelDocInt] =
@@ -44,6 +45,7 @@ object DocumentInternControllerHelper {
                                              destinoId: Option[String],
                                              userId: Option[String],
                                              firma: Option[String],
+                                             responsableArea: Option[String],
                                              currentDate: Option[String]
                                         )
 
@@ -104,7 +106,7 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), "",Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),Some(""),None,None))
 
     val response = ResponseCircularDocument(document.id,document.estadoDocumento,document.tipoDocuId,Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),
       document.siglas,document.anio, document.asunto,document.observacion,dependency.get.id.get,Some(dependency.get.nombre),document.active,document.userId,Some(user.get.nombre), Some(user.get.apellido), document.firma,
@@ -127,7 +129,7 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),Some(""),None,None))
 
     val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
@@ -164,6 +166,7 @@ object DocumentInternControllerHelper {
         true,
         documentIntern.userId,
         documentIntern.firma,
+        Some(""),
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
@@ -187,7 +190,7 @@ object DocumentInternControllerHelper {
     def toInternDocument = {
       val internDocumentId = UniqueId.generateId
       DocumentosInternos(Some(internDocumentId),Some("GENERADO"),internDocument.tipoDocuId,internDocument.numDocumento,internDocument.siglas,internDocument.anio,internDocument.asunto,
-        Some(""),internDocument.origenId,internDocument.destinoId,true,internDocument.userId,Some(""),Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
+        Some(""),internDocument.origenId,internDocument.destinoId,true,internDocument.userId,Some(""),internDocument.responsableArea,Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)))
     }
   }

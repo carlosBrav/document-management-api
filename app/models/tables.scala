@@ -94,8 +94,9 @@ class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos
   def active = column[Boolean]("ACTIVE")
   def userId = column[String]("USER_ID")
   def firma = column[String]("FIRMA")
+  def responsableArea = column[String]("RESPONSABLE_AREA")
   def * = (id.?, estadoDocumento.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,origenId, destinoId.?,active,
-    userId.?, firma.?,fechaCreacion.?, fechaModificacion.?) <>
+    userId.?, firma.?,responsableArea.?,fechaCreacion.?, fechaModificacion.?) <>
     (DocumentosInternos.tupled, DocumentosInternos.unapply)
 }
 

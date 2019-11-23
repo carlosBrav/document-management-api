@@ -1,7 +1,7 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import repositories.{MovimientosRepository, DependencyRepository}
+import repositories.{MovimientosRepository, DependencyRepository, DocumentsInternRepository}
 import models.{Movimientos, MovimientoTable}
 import slick.jdbc.MySQLProfile.api._
 import scala.concurrent.Future
@@ -12,18 +12,20 @@ import scala.util.{Failure, Try}
 @Singleton
 class MovimientoService @Inject()(
                                  override val repository: MovimientosRepository,
-                                 dependencyRepository: DependencyRepository
+                                 dependencyRepository: DependencyRepository,
+                                 internDocumentRepository: DocumentsInternRepository
                                  )
   extends BaseEntityService[MovimientoTable, Movimientos, MovimientosRepository] {
 
   def loadUserMovementsByOfficeId(officeId: String) = {
     val queryMovements = repository.query
     val queryDependency = dependencyRepository.query
+    val queryInternDocument = internDocumentRepository.query
 
     val joinMovements = for{
-      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.dependenciasId1 === officeId && x.movimiento > 0 && x.fechaIngreso.asColumnOf[Option[java.sql.Timestamp]].isEmpty) joinLeft
-        queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
-    } yield (movement, dependencyOrigin, dependencyDestiny)
+      (((movement, dependencyOrigin), dependencyDestiny),internDocument) <- queryMovements.filter(x => x.dependenciasId1 === officeId && x.movimiento > 0 && x.fechaIngreso.asColumnOf[Option[java.sql.Timestamp]].isEmpty) joinLeft
+        queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id) joinLeft queryInternDocument on (_._1._1.documentosInternosId === _.id)
+    } yield (movement, dependencyOrigin, dependencyDestiny, internDocument)
 
     repository.db.run(joinMovements.result)
   }
