@@ -1,20 +1,17 @@
 package helpers
 
-import java.util.Date
+import java.util.{Calendar, Date}
 
 import helpers.DocumentInternControllerHelper.RequestResponseModelDocInt
-import models.{Dependencias, DocumentosInternos, Movimientos}
+import models.{Dependencias, DocumentosInternos, Movimientos, TipoDocumento}
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.{convertToString,convertToDate}
+import utils.Constants.{convertToDate, convertToString}
 import utils._
 import utils.UniqueId
 
 object MovementsControllerHelper {
 
-  case class RequestDeleteMovements(movementsIds: Seq[String])
-  implicit val requestDeleteMovementsFormat: OFormat[RequestDeleteMovements] = Json.format[RequestDeleteMovements]
-
-  case class ResponseModelMovements(id: Option[String],
+  case class ResponseModelMovement(id: Option[String],
                                     movimiento: Option[Int],
                                     numTram: Option[String],
                                     estadoDocumento: String,
@@ -33,15 +30,40 @@ object MovementsControllerHelper {
                                     docuNombre: String,
                                     docuNum: String,
                                     docuSiglas: String,
-                                    docuAnio: String)
+                                    docuAnio: String,
+                                    previousMovementId: Option[String])
 
-  implicit val responseModelMovementsFormat: OFormat[ResponseModelMovements] = Json.format[ResponseModelMovements]
+  implicit val responseModelMovementFormat: OFormat[ResponseModelMovement] = Json.format[ResponseModelMovement]
 
-  case class ResponseMovements(responseCode: Int, responseMessage: String, data: Seq[ResponseModelMovements])
+  case class ResponseAdminMovements(id: Option[String],
+                                    movimiento: Option[Int],
+                                    numTram: Option[String],
+                                    estadoDocumento: String,
+                                    documentosInternosId: Option[String],
+                                    internDocument: Option[String],
+                                    dependenciasId: Option[String],
+                                    origenNombre: Option[String],
+                                    fechaEnvio: Option[String],
+                                    observacion: Option[String],
+                                    indiNombre: Option[String],
+                                    docuNombre: String,
+                                    docuNum: String,
+                                    docuSiglas: String,
+                                    docuAnio: String
+                                   )
+  implicit val responseAdminMovementsFormat: OFormat[ResponseAdminMovements] = Json.format[ResponseAdminMovements]
+
+  case class RequestDeleteMovements(movementsIds: Seq[String])
+  implicit val requestDeleteMovementsFormat: OFormat[RequestDeleteMovements] = Json.format[RequestDeleteMovements]
+
+  case class ResponseMovements(responseCode: Int, responseMessage: String, data: Seq[ResponseModelMovement])
   implicit val responseMovementsFormat: OFormat[ResponseMovements] = Json.format[ResponseMovements]
 
+  case class ResponseAdminMovement(responseCode: Int, responseMessage: String, data: Seq[ResponseAdminMovements])
+  implicit val responseAdminMovementFormat: OFormat[ResponseAdminMovement] = Json.format[ResponseAdminMovement]
+
   def toResponseDetailsMovements(movement: Movimientos, dependencyDestiny: Option[Dependencias]) = {
-    val response = ResponseModelMovements(movement.id,
+    val response = ResponseModelMovement(movement.id,
       movement.movimiento,
       movement.numTram,
       movement.estadoDocumento,
@@ -59,12 +81,13 @@ object MovementsControllerHelper {
       movement.docuNombre.getOrElse(""),
       movement.docuNum.getOrElse(""),
       movement.docuSiglas.getOrElse(""),
-      movement.docuAnio.getOrElse(""))
+      movement.docuAnio.getOrElse(""),
+      movement.previousMovementId)
     response
   }
 
   def toResponseModelMovements(movimiento: Movimientos) = {
-    val response = ResponseModelMovements(movimiento.id,
+    val response = ResponseModelMovement(movimiento.id,
       movimiento.movimiento,
       movimiento.numTram,
       movimiento.estadoDocumento,
@@ -82,12 +105,16 @@ object MovementsControllerHelper {
       movimiento.docuNombre.getOrElse(""),
       movimiento.docuNum.getOrElse(""),
       movimiento.docuSiglas.getOrElse(""),
-      movimiento.docuAnio.getOrElse(""))
+      movimiento.docuAnio.getOrElse(""),
+      movimiento.previousMovementId)
     response
   }
 
-  def toResponseMovements(movimiento: Movimientos, dependencyOrigin: Option[Dependencias], dependencyDestiny: Option[Dependencias]) : ResponseModelMovements ={
-    val response = ResponseModelMovements(movimiento.id,
+  def toResponseMovements(movimiento: Movimientos,
+                          dependencyOrigin: Option[Dependencias],
+                          dependencyDestiny: Option[Dependencias]) : ResponseModelMovement ={
+
+    val response = ResponseModelMovement(movimiento.id,
       movimiento.movimiento,
       movimiento.numTram,
       movimiento.estadoDocumento,
@@ -105,7 +132,36 @@ object MovementsControllerHelper {
       movimiento.docuNombre.getOrElse(""),
       movimiento.docuNum.getOrElse(""),
       movimiento.docuSiglas.getOrElse(""),
-      movimiento.docuAnio.getOrElse(""))
+      movimiento.docuAnio.getOrElse(""),
+      movimiento.previousMovementId)
+    response
+  }
+
+  def toResponseAdminMovements(internDocument: DocumentosInternos,
+                               dependency: Option[Dependencias],
+                               document: Option[TipoDocumento],
+                                movement: Option[Movimientos]
+                               ) ={
+
+    val typeDocument = document.getOrElse(TipoDocumento(Some(""),"",Some(""),Some(""),None,None))
+
+    val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
+
+    val response = ResponseAdminMovements(move.id,
+      move.movimiento,
+      move.numTram,
+      move.estadoDocumento,
+      move.documentosInternosId,
+      Some(typeDocument.nombreTipo.concat(" Nº ").concat("%05d".format(internDocument.numDocumento.get)).concat("-"+internDocument.siglas.get).concat("-"+internDocument.anio.get)),
+      Some(move.dependenciasId),
+      Some(dependency.get.nombre),
+      Option(convertToString(move.fechaEnvio)),
+      move.observacion,
+      move.indiNombre,
+      move.docuNombre.get,
+      move.docuNum.get,
+      move.docuSiglas.get,
+      move.docuAnio.get)
     response
   }
 
@@ -126,6 +182,7 @@ object MovementsControllerHelper {
                                    docuNum: Option[String],
                                    docuSiglas: Option[String],
                                    docuAnio: Option[String],
+                                   previousMovementId: Option[String],
                                    currentDate: Option[String])
 
   implicit val requestMovementsFormat: OFormat[RequestModelMovements] = Json.format[RequestModelMovements]
@@ -135,10 +192,27 @@ object MovementsControllerHelper {
     def toMovementsModel: Seq[Movimientos] = {
       val newMovements = movements.map( move => {
         val movementId = UniqueId.generateId
-        val movement = Movimientos(Some(movementId),Some(move.movimiento.get +1),move.numTram,"EN PROCESO",Some(""),move.dependenciasId1,officeId,Some(""),
-          userId,None,Some(new java.sql.Timestamp(new Date().getTime)),move.observacion,move.indiNombre,move.indiCod,
-          move.docuNombre, move.docuNum, move.docuSiglas, move.docuAnio,
-          Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
+        val movement = Movimientos(Some(movementId),
+          Some(move.movimiento.get +1),
+          move.numTram,
+          "EN PROCESO",
+          Some(""),
+          move.dependenciasId1,
+          officeId,
+          Some(""),
+          userId,
+          None,
+          Some(new java.sql.Timestamp(new Date().getTime)),
+          move.observacion,
+          move.indiNombre,
+          move.indiCod,
+          move.docuNombre,
+          move.docuNum,
+          move.docuSiglas,
+          move.docuAnio,
+          move.previousMovementId,
+          Some(new java.sql.Timestamp(new Date().getTime)),
+          Some(new java.sql.Timestamp(new Date().getTime)))
         movement
       })
       newMovements
@@ -164,7 +238,6 @@ object MovementsControllerHelper {
         documentIntern.observacion,
         documentIntern.origenId,
         documentIntern.destinoId,
-        documentIntern.active,
         documentIntern.userId,
         documentIntern.firma,
         documentIntern.responsableArea,
@@ -189,6 +262,7 @@ object MovementsControllerHelper {
         movement.docuNum,
         movement.docuSiglas,
         movement.docuAnio,
+        movement.id,
         Some(new java.sql.Timestamp(convertToDate(movement.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(movement.currentDate.get, Format.LOCAL_DATE).getTime)))
       (newDocumentIntern,newMovement)
@@ -197,6 +271,6 @@ object MovementsControllerHelper {
   implicit val requestResponseToMovementsFormat: OFormat[RequestResponseToMovements] =
     Json.format[RequestResponseToMovements]
 
-  case class ResponseCircularDetails(responseCode: Int, data: Seq[ResponseModelMovements])
+  case class ResponseCircularDetails(responseCode: Int, data: Seq[ResponseModelMovement])
   implicit val responseCircularDetailsFormat: OFormat[ResponseCircularDetails] = Json.format[ResponseCircularDetails]
 }

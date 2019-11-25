@@ -67,6 +67,20 @@ class UsersController @Inject()(
       }
   }
 
+  def loadAdminMovementsByOffice(officeId: String) : Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadAdminMovementsByOffice(officeId)
+      .map(movements =>
+        JsonOk(ResponseAdminMovement(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseAdminMovements(move._1,move._2,move._3,move._4)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
+      }
+  }
+
   def loadMovementsByTramNum(numTram: String): Action[AnyContent] = Action.async { implicit request =>
 
     movimientoService.loadMovementsByTramNum(numTram)
@@ -265,7 +279,12 @@ class UsersController @Inject()(
   def deleteDocumentIntern(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
     val result: Future[Result] = for {
       Success(document) <- documentService.loadById(documentId)
-      _ <- Future.successful(documentService.updateById(documentId, document.get.copy(active = false)))
+      Success(movement) <- movimientoService.loadByInternDocumentId(document.get.id.get)
+      _ <- if(movement.isEmpty) {
+        documentService.deleteById(documentId)
+      }else{
+        documentService.deleteDocuments(List(documentId))
+      }
     } yield JsonOk(
       Response[String](ResponseCodes.SUCCESS, "Success", s"Documento ${document.get.id.get} eliminado")
     )

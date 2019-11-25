@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS MOVIMIENTOS (
   `docu_num` VARCHAR(40) NULL,
   `docu_siglas` VARCHAR(40) NULL,
   `docu_anio` VARCHAR(40) NULL,
+  `previous_movement_id` VARCHAR(40) NULL,
   `fecha_creacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `fecha_modificacion` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -95,7 +96,6 @@ CREATE TABLE IF NOT EXISTS DOCUMENTOS_INTERNOS (
   `observacion` varchar(1200) NULL,
   `origen_id` varchar(25) NOT NULL,
   `destino_id` varchar(25) NOT NULL,
-  `active` tinyint(4) NOT NULL DEFAULT '0',
   `user_id` varchar(45),
   `firma` varchar(250),
   PRIMARY KEY (`id`))

@@ -15,6 +15,7 @@ POST          /api/movements/derived                    controllers.UsersControl
 POST          /api/movements/derivedAssigned            controllers.UsersController.deriveAssignedDocument
 GET           /api/movements/office/:officeId           controllers.UsersController.loadMovementsByOffice(officeId)
 GET           /api/movements/user/office/:officeId      controllers.UsersController.loadUserMovementsByOffice(officeId)
+GET           /api/movements/admin/office/:officeId     controllers.UsersController.loadAdminMovementsByOffice(officeId)
 GET           /api/movements/numTram/:numTram           controllers.UsersController.loadMovementsByTramNum(numTram)
 GET           /api/movements/currentDate                controllers.UsersController.loadMovementsByCurrentDate
 PUT           /api/movements                            controllers.UsersController.updateDocumentConfirm

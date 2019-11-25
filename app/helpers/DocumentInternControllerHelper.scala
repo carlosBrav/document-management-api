@@ -4,7 +4,6 @@ import play.api.libs.json.{Json, OFormat}
 import models.{Dependencias, DocumentosInternos, Movimientos, TipoDocumento, Usuario}
 import java.util._
 
-import helpers.MovementsControllerHelper.{RequestModelMovements, ResponseModelMovements}
 import utils.Constants._
 import utils.{Format, UniqueId}
 
@@ -66,7 +65,6 @@ object DocumentInternControllerHelper {
                                        origenName: Option[String],
                                        destinoId: Option[String],
                                        destinoName: Option[String],
-                                       active: Boolean,
                                        userId: Option[String],
                                        userName: Option[String],
                                        userLastName: Option[String],
@@ -90,7 +88,6 @@ object DocumentInternControllerHelper {
                                        observacion: Option[String],
                                        origenId: String,
                                        origenName: Option[String],
-                                       active: Boolean,
                                        userId: Option[String],
                                        userName: Option[String],
                                        userLastName: Option[String],
@@ -106,10 +103,10 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), "",Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
 
     val response = ResponseCircularDocument(document.id,document.estadoDocumento,document.tipoDocuId,Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),
-      document.siglas,document.anio, document.asunto,document.observacion,dependency.get.id.get,Some(dependency.get.nombre),document.active,document.userId,Some(user.get.nombre), Some(user.get.apellido), document.firma,
+      document.siglas,document.anio, document.asunto,document.observacion,dependency.get.id.get,Some(dependency.get.nombre),document.userId,Some(user.get.nombre), Some(user.get.apellido), document.firma,
       Some(convertToString(document.fechaCreacion))
     )
     response
@@ -129,15 +126,15 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),true,Some(""),Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
 
-    val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
+    val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
     val dependencyDest = dependencyDestiny.getOrElse(Dependencias(Some(""),"",false,Some(""),"",Some(""),None,None))
 
     val response = ResponseDocumentsInterns(document.id,
       document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,document.anio,
-      document.asunto, document.observacion,document.origenId,Some(dependency.get.nombre),document.destinoId,Some(dependencyDest.nombre),document.active, document.userId,
+      document.asunto, document.observacion,document.origenId,Some(dependency.get.nombre),document.destinoId,Some(dependencyDest.nombre), document.userId,
       Some(user.get.nombre), Some(user.get.apellido), document.firma,
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)), move.id,move.numTram)
     response
@@ -163,7 +160,6 @@ object DocumentInternControllerHelper {
         Some(""),
         documentIntern.origenId,
         documentIntern.destinoId,
-        true,
         documentIntern.userId,
         documentIntern.firma,
         Some(""),
@@ -174,7 +170,7 @@ object DocumentInternControllerHelper {
         val movementId = UniqueId.generateId
         val newMovement = Movimientos(Some(movementId), Some(0), Some(movementId),
           "DERIVADO", Some(documentInternoId), officeId , destination, Some(""), userId, None, Some(new java.sql.Timestamp(new Date().getTime)),
-          Some(""), Some(""), Some(""), Some(""),Some(""),Some(""), Some(""),
+          Some(""), Some(""), Some(""), Some(""),Some(""),Some(""), Some(""),Some(""),
           Some(new java.sql.Timestamp(new Date().getTime)), Some(new java.sql.Timestamp(new Date().getTime)))
         newMovement
       })
@@ -190,7 +186,7 @@ object DocumentInternControllerHelper {
     def toInternDocument = {
       val internDocumentId = UniqueId.generateId
       DocumentosInternos(Some(internDocumentId),Some("GENERADO"),internDocument.tipoDocuId,internDocument.numDocumento,internDocument.siglas,internDocument.anio,internDocument.asunto,
-        Some(""),internDocument.origenId,internDocument.destinoId,true,internDocument.userId,Some(""),internDocument.responsableArea,Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
+        Some(""),internDocument.origenId,internDocument.destinoId,internDocument.userId,Some(""),internDocument.responsableArea,Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)))
     }
   }

@@ -41,6 +41,7 @@ object ViewsControllerHelper {
                                docuNum: Option[String],
                                docuSiglas: Option[String],
                                docuAnio: Option[String],
+                               previousMovementId: Option[String],
                                moviFecEnv: Option[String],
                                moviFecIng: Option[String])
 
@@ -76,7 +77,7 @@ object ViewsControllerHelper {
           movElement.moviObs,
           movElement.indiNombre,
           movElement.indiCod,
-          movElement.docuNombre,movElement.docuNum,movElement.docuSiglas, movElement.docuAnio,
+          movElement.docuNombre,movElement.docuNum,movElement.docuSiglas, movElement.docuAnio,movElement.previousMovementId,
           Some(new java.sql.Timestamp(new Date().getTime)),Some(new java.sql.Timestamp(new Date().getTime)))
 
         elementModel

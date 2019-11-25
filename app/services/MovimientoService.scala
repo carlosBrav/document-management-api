@@ -1,11 +1,15 @@
 package services
 
+import java.util.Calendar
+
 import javax.inject.{Inject, Singleton}
-import repositories.{MovimientosRepository, DependencyRepository, DocumentsInternRepository}
-import models.{Movimientos, MovimientoTable}
+import repositories.{DependencyRepository, DocumentsInternRepository, MovimientosRepository, TypeDocumentRepository}
+import models.{DocumentosInternos, MovimientoTable, Movimientos}
 import slick.jdbc.MySQLProfile.api._
+
 import scala.concurrent.Future
 import slick.lifted.TableQuery
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.{Failure, Try}
 
@@ -13,9 +17,11 @@ import scala.util.{Failure, Try}
 class MovimientoService @Inject()(
                                  override val repository: MovimientosRepository,
                                  dependencyRepository: DependencyRepository,
-                                 internDocumentRepository: DocumentsInternRepository
+                                 internDocumentRepository: DocumentsInternRepository,
+                                 typeDocumentRepository: TypeDocumentRepository
                                  )
   extends BaseEntityService[MovimientoTable, Movimientos, MovimientosRepository] {
+
 
   def loadUserMovementsByOfficeId(officeId: String) = {
     val queryMovements = repository.query
@@ -27,7 +33,7 @@ class MovimientoService @Inject()(
         queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id) joinLeft queryInternDocument on (_._1._1.documentosInternosId === _.id)
     } yield (movement, dependencyOrigin, dependencyDestiny, internDocument)
 
-    repository.db.run(joinMovements.result)
+    repository.db.run(joinMovements.sortBy(_._1.fechaEnvio.desc).result)
   }
 
   def saveMovements(movements: Seq[Movimientos]) = {
@@ -40,6 +46,20 @@ class MovimientoService @Inject()(
 
   def saveDerivedMovements(userId: String, oldMovements: Seq[String], newMovements: Seq[Movimientos]) ={
     repository.saveDerivedDocuments(userId,oldMovements,newMovements)
+  }
+
+  def loadAdminMovementsByOffice(officeId: String)={
+    val queryInternDocument = internDocumentRepository.query
+    val queryDependency = dependencyRepository.query
+    val queryMovements = repository.query
+    val queryTypeDocuments = typeDocumentRepository.query
+
+    val joinInternDocument = for {
+      (((internDocument,dependency),typeDocument),movement) <- queryInternDocument.filter(x => x.destinoId === officeId) joinLeft queryDependency on (_.origenId === _.id) joinLeft
+      queryTypeDocuments on (_._1.tipoDocuId === _.id) joinLeft queryMovements on (_._1._1.id === _.documentosInternosId)
+    } yield(internDocument, dependency, typeDocument, movement)
+
+    repository.db.run(joinInternDocument.sortBy(_._1.fechaCreacion.desc).result)
   }
 
   def loadMovementsByOffice(officeId: String)= {
@@ -88,5 +108,9 @@ class MovimientoService @Inject()(
     } yield(movement, dependencyDestiny)
 
     repository.db.run(joinMovements.result)
+  }
+
+  def loadByInternDocumentId(internDocumentId: String) = {
+    repository.loadByInternDocumentId(internDocumentId)
   }
 }

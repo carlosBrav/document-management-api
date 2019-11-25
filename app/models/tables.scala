@@ -54,11 +54,12 @@ class MovimientoTable(tag: Tag) extends BaseEntityTable[Movimientos](tag,"MOVIMI
   def docuAnio = column[String]("DOCU_ANIO")
   def fechaEnvio= column[Timestamp]("FECHA_ENVIO")
   def observacion= column[String]("OBSERVACION")
+  def previousMovementId = column[String]("PREVIOUS_MOVEMENT_ID")
 
   def * =
     (id.?,movimiento.?,numTram.?,estadoDocumento,documentosInternosId.?,dependenciasId,dependenciasId1,
       asignadoA.?,usuarioId,fechaIngreso.?,fechaEnvio.?,observacion.?,indiNombre.?, indiCod.?, docuNombre.?,
-      docuNum.?, docuSiglas.?, docuAnio.?, fechaCreacion.?, fechaModificacion.?) <>
+      docuNum.?, docuSiglas.?, docuAnio.?, previousMovementId.?, fechaCreacion.?, fechaModificacion.?) <>
       (Movimientos.tupled, Movimientos.unapply)
 }
 
@@ -91,11 +92,10 @@ class DocumentoInternoTable(tag: Tag) extends BaseEntityTable[DocumentosInternos
   def observacion = column[String]("OBSERVACION")
   def origenId = column[String]("ORIGEN_ID")
   def destinoId = column[String]("DESTINO_ID")
-  def active = column[Boolean]("ACTIVE")
   def userId = column[String]("USER_ID")
   def firma = column[String]("FIRMA")
   def responsableArea = column[String]("RESPONSABLE_AREA")
-  def * = (id.?, estadoDocumento.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,origenId, destinoId.?,active,
+  def * = (id.?, estadoDocumento.?, tipoDocuId,numDocumento.?,siglas.?,anio.?,asunto.?, observacion.?,origenId, destinoId.?,
     userId.?, firma.?,responsableArea.?,fechaCreacion.?, fechaModificacion.?) <>
     (DocumentosInternos.tupled, DocumentosInternos.unapply)
 }
