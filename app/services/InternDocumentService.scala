@@ -56,7 +56,7 @@ class InternDocumentService @Inject()(
     val joinResult = for {
       (((((document, typeDocument), dependency), dependencyDestiny), user),movement)
         <- documentQuery
-        .filter(x => x.userId === userId) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id) joinLeft userQuery on (_._1._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1._1.id === _.documentosInternosId)
+        .filter(x => x.userId === userId && !(x.tipoDocuId.inSetBind(List("54545","74545"))) ) joinLeft typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id) joinLeft userQuery on (_._1._1._1.userId === _.id) joinLeft movementQuery on (_._1._1._1._1.id === _.documentosInternosId)
     } yield(document, typeDocument, dependency, dependencyDestiny, user, movement)
 
     repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
