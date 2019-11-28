@@ -52,12 +52,12 @@ class MovimientoService @Inject()(
     val queryInternDocument = internDocumentRepository.query
     val queryDependency = dependencyRepository.query
     val queryMovements = repository.query
-    val queryTypeDocuments = typeDocumentRepository.query
 
     val joinInternDocument = for {
-      (((internDocument,dependency),typeDocument),movement) <- queryInternDocument.filter(x => x.destinoId === officeId) joinLeft queryDependency on (_.origenId === _.id) joinLeft
-      queryTypeDocuments on (_._1.tipoDocuId === _.id) joinLeft queryMovements on (_._1._1.id === _.documentosInternosId)
-    } yield(internDocument, dependency, typeDocument, movement)
+      ((movement, dependency),internDocument) <- queryMovements.filter(x=>x.estadoDocumento === "EN PROCESO" && x.dependenciasId1 === officeId) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft
+      queryInternDocument on (_._1.documentosInternosId === _.id)
+    } yield(movement,dependency,internDocument)
+
 
     repository.db.run(joinInternDocument.sortBy(_._1.fechaCreacion.desc).result)
   }
@@ -110,7 +110,7 @@ class MovimientoService @Inject()(
     repository.db.run(joinMovements.result)
   }
 
-  def loadByInternDocumentId(internDocumentId: String) = {
+  def loadByInternDocumentIds(internDocumentId: Seq[String]) = {
     repository.loadByInternDocumentId(internDocumentId)
   }
 }

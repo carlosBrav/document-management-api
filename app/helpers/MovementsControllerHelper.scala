@@ -40,7 +40,6 @@ object MovementsControllerHelper {
                                     numTram: Option[String],
                                     estadoDocumento: String,
                                     documentosInternosId: Option[String],
-                                    internDocument: Option[String],
                                     dependenciasId: Option[String],
                                     origenNombre: Option[String],
                                     fechaEnvio: Option[String],
@@ -49,7 +48,12 @@ object MovementsControllerHelper {
                                     docuNombre: String,
                                     docuNum: String,
                                     docuSiglas: String,
-                                    docuAnio: String
+                                    docuAnio: String,
+                                    numDocumentIntern: Option[String],
+                                    siglasDocumentIntern: Option[String],
+                                    anioDocumentIntern: Option[String],
+                                    tipoDocuId: Option[String],
+                                    previousMovementId: Option[String]
                                    )
   implicit val responseAdminMovementsFormat: OFormat[ResponseAdminMovements] = Json.format[ResponseAdminMovements]
 
@@ -137,31 +141,34 @@ object MovementsControllerHelper {
     response
   }
 
-  def toResponseAdminMovements(internDocument: DocumentosInternos,
+  def toResponseAdminMovements(movement: Movimientos,
                                dependency: Option[Dependencias],
-                               document: Option[TipoDocumento],
-                                movement: Option[Movimientos]
+                               internDocument: Option[DocumentosInternos]
                                ) ={
 
-    val typeDocument = document.getOrElse(TipoDocumento(Some(""),"",Some(""),Some(""),None,None))
+    val document = internDocument.getOrElse(DocumentosInternos(Some(""),
+      Some(""), Some("").getOrElse(""),Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
 
-    val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
-
-    val response = ResponseAdminMovements(move.id,
-      move.movimiento,
-      move.numTram,
-      move.estadoDocumento,
-      move.documentosInternosId,
-      Some(typeDocument.nombreTipo.concat(" Nº ").concat("%05d".format(internDocument.numDocumento.get)).concat("-"+internDocument.siglas.get).concat("-"+internDocument.anio.get)),
-      Some(move.dependenciasId),
+    val response = ResponseAdminMovements(movement.id,
+      movement.movimiento,
+      movement.numTram,
+      movement.estadoDocumento,
+      movement.documentosInternosId,
+      Some(movement.dependenciasId),
       Some(dependency.get.nombre),
-      Option(convertToString(move.fechaEnvio)),
-      move.observacion,
-      move.indiNombre,
-      move.docuNombre.get,
-      move.docuNum.get,
-      move.docuSiglas.get,
-      move.docuAnio.get)
+      Option(convertToString(movement.fechaEnvio)),
+      movement.observacion,
+      movement.indiNombre,
+      movement.docuNombre.get,
+      movement.docuNum.get,
+      movement.docuSiglas.get,
+      movement.docuAnio.get,
+      Some("%05d".format(document.numDocumento.get)),
+      document.siglas,
+      document.anio,
+      Some(document.tipoDocuId),
+      movement.previousMovementId)
     response
   }
 

@@ -71,7 +71,7 @@ class UsersController @Inject()(
 
     movimientoService.loadAdminMovementsByOffice(officeId)
       .map(movements =>
-        JsonOk(ResponseAdminMovement(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseAdminMovements(move._1,move._2,move._3,move._4)))
+        JsonOk(ResponseAdminMovement(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseAdminMovements(move._1,move._2,move._3)))
         )
       )
       .recover {
@@ -265,7 +265,7 @@ class UsersController @Inject()(
           _ <- movimientoService.updateStatusToMovementAdmin(movementRequest.movement.id.get)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
-            s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")
+            s"documento creado ${newDocumentIntern.id.get} con movimiento ${newMovement.id.get}")
         )
         response recover {
           case _ => JsonOk(
@@ -274,25 +274,6 @@ class UsersController @Inject()(
         }
       }
     )
-  }
-
-  def deleteDocumentIntern(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    val result: Future[Result] = for {
-      Success(document) <- documentService.loadById(documentId)
-      Success(movement) <- movimientoService.loadByInternDocumentId(document.get.id.get)
-      _ <- if(movement.isEmpty) {
-        documentService.deleteById(documentId)
-      }else{
-        documentService.deleteDocuments(List(documentId))
-      }
-    } yield JsonOk(
-      Response[String](ResponseCodes.SUCCESS, "Success", s"Documento ${document.get.id.get} eliminado")
-    )
-    result recover {
-      case _ => JsonOk(
-        ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al eliminar documento interno")
-      )
-    }
   }
 
   def deleteMovements : Action[JsValue] = Action.async(parse.json) { implicit request =>

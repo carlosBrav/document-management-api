@@ -151,7 +151,10 @@ class InternDocumentsController @Inject()(
       },
       documentRequest => {
         val response = for {
-          _ <- documentInternService.deleteDocuments(documentRequest.documentsIds)
+          Success(movement) <- movementService.loadByInternDocumentIds(documentRequest.documentsIds)
+          _ <- if(movement.isEmpty){
+            documentInternService.deleteDocuments(documentRequest.documentsIds,List(""))
+          } else documentInternService.deleteDocuments(documentRequest.documentsIds,movement.map(x=>x.previousMovementId.get))
         }yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
             s"Se ha(n) eliminado ${documentRequest.documentsIds.length} documentos")

@@ -22,14 +22,16 @@ class DocumentsInternRepository @Inject()(dbConfigProvider: DatabaseConfigProvid
     filter(x => x.id === documentId).map(documents => Some(documents.head)) recover { case _: Exception => None }
   }
 
-  def deleteDocuments(documentsId: Seq[String]) = {
+  def deleteDocuments(documentsId: Seq[String], previousMovementId: Seq[String]) = {
 
     val docIntQuery = query
     val moveQuery = movementRepository.query
 
 
     db.run(
-      docIntQuery.filter(x => x.id.inSet(documentsId)).delete andThen moveQuery.filter(x=>x.documentosInternosId.inSet(documentsId)).delete
+      docIntQuery.filter(x => x.id.inSet(documentsId)).delete
+        andThen moveQuery.filter(x=>x.documentosInternosId.inSet(documentsId)).delete
+        andThen moveQuery.filter(x=>x.id.inSet(previousMovementId)).map(x=>x.estadoDocumento).update("EN PROCESO")
     )
   }
 }

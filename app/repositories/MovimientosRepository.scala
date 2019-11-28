@@ -15,8 +15,8 @@ import utils.Format
 class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider, dependencyRepository: DependencyRepository)
     extends BaseEntityRepository[MovimientoTable,Movimientos](dbConfigProvider, TableQuery[MovimientoTable]) {
 
-  def loadByInternDocumentId(internDocumentId: String) ={
-    db.run(query.filter(x=>x.documentosInternosId === internDocumentId).result.headOption.asTry)
+  def loadByInternDocumentId(internDocumentIds: Seq[String]) ={
+    db.run(query.filter(x=>x.documentosInternosId.inSet(internDocumentIds)).result.asTry)
   }
 
   def getMovimientos = {

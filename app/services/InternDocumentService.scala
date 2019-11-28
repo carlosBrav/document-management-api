@@ -94,8 +94,8 @@ class InternDocumentService @Inject()(
     repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
   }
 
-  def deleteDocuments(documentsIds: Seq[String]) = {
-    repository.deleteDocuments(documentsIds)
+  def deleteDocuments(documentsIds: Seq[String], previousMovementId: Seq[String]) = {
+    repository.deleteDocuments(documentsIds,previousMovementId)
   }
 
 }
