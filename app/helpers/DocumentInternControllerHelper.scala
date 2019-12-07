@@ -45,7 +45,8 @@ object DocumentInternControllerHelper {
                                              userId: Option[String],
                                              firma: Option[String],
                                              responsableArea: Option[String],
-                                             currentDate: Option[String]
+                                             currentDate: Option[String],
+                                             referenceDocument: Option[String]
                                         )
 
   implicit val requestInternDocumentsFormat: OFormat[RequestModelInternDocuments] =
@@ -74,6 +75,9 @@ object DocumentInternControllerHelper {
                                        movementId: Option[String],
                                        numTram: Option[String]
                                      )
+
+
+
   implicit val responseDocumentsInternsFormat: OFormat[ResponseDocumentsInterns] = Json.format[ResponseDocumentsInterns]
 
   case class ResponseCircularDocument(
@@ -96,6 +100,28 @@ object DocumentInternControllerHelper {
                                      )
   implicit val responseCircularDocument: OFormat[ResponseCircularDocument] = Json.format[ResponseCircularDocument]
 
+  case class DocumentInternAdmin(
+                                          id: Option[String],
+                                          estadoDocumento: Option[String],
+                                          tipoDocuId: String,
+                                          documentName: Option[String],
+                                          numDocumento: Option[String],
+                                          siglas: Option[String],
+                                          anio: Option[String],
+                                          asunto: Option[String],
+                                          observacion: Option[String],
+                                          origenId: String,
+                                          originName: Option[String],
+                                          destinoId: Option[String],
+                                          destinyName: Option[String],
+                                          userId: Option[String],
+                                          firma: Option[String],
+                                          responsableArea: Option[String],
+                                          fechaCreacion: Option[String]
+                                        )
+
+  implicit val documentInternAdminFormat: OFormat[DocumentInternAdmin] = Json.format[DocumentInternAdmin]
+
   def toResponseCircularDocument(documents: Option[DocumentosInternos],
                                  typeDocument: Option[TipoDocumento],
                                  dependency: Option[Dependencias],
@@ -103,7 +129,7 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), "",Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
     val response = ResponseCircularDocument(document.id,document.estadoDocumento,document.tipoDocuId,Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),
       document.siglas,document.anio, document.asunto,document.observacion,dependency.get.id.get,Some(dependency.get.nombre),document.userId,Some(user.get.nombre), Some(user.get.apellido), document.firma,
@@ -126,7 +152,7 @@ object DocumentInternControllerHelper {
 
     val document = documents.getOrElse(DocumentosInternos(Some(""),
       Some(""), tipoDocuId.getOrElse(""),Some(-1),siglas,Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
     val move = movement.getOrElse(Movimientos(Some(""),Some(0),Some(""),"",Some(""),"","",Some(""),"",None,None,Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
@@ -139,6 +165,21 @@ object DocumentInternControllerHelper {
       Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)), move.id,move.numTram)
     response
   }
+
+  def toResponseAdminDocumentIntern(document: DocumentosInternos,
+                                    typeDocument: Option[TipoDocumento],
+                                    dependencyOrigin: Option[Dependencias],
+                                    dependencyDestiny: Option[Dependencias]):DocumentInternAdmin = {
+
+    val response = DocumentInternAdmin(document.id,document.estadoDocumento,
+      document.tipoDocuId,Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,
+      document.anio,document.asunto,document.observacion,document.origenId,Some(dependencyOrigin.get.nombre),
+      document.destinoId,Some(dependencyDestiny.get.nombre),document.userId,document.firma,document.responsableArea,Some(convertToString(document.fechaCreacion)))
+    response
+  }
+
+  case class ResponseInternDocumentAdmin(responseCode: Int, data: Seq[DocumentInternAdmin])
+  implicit val responseInternDocumentAdminFormat: OFormat[ResponseInternDocumentAdmin] = Json.format[ResponseInternDocumentAdmin]
 
   case class ResponseDocumentsInternsByUserId(responseCode: Int, data: Seq[ResponseDocumentsInterns])
   implicit val responseAllDocumentsInternsFormat: OFormat[ResponseDocumentsInternsByUserId] = Json.format[ResponseDocumentsInternsByUserId]
@@ -163,6 +204,7 @@ object DocumentInternControllerHelper {
         documentIntern.userId,
         documentIntern.firma,
         Some(""),
+        Some(""),
         Some(new java.sql.Timestamp(new Date().getTime)),
         Some(new java.sql.Timestamp(new Date().getTime)))
 
@@ -186,7 +228,10 @@ object DocumentInternControllerHelper {
     def toInternDocument = {
       val internDocumentId = UniqueId.generateId
       DocumentosInternos(Some(internDocumentId),Some("GENERADO"),internDocument.tipoDocuId,internDocument.numDocumento,internDocument.siglas,internDocument.anio,internDocument.asunto,
-        Some(""),internDocument.origenId,internDocument.destinoId,internDocument.userId,Some(""),internDocument.responsableArea,Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
+        Some(""),internDocument.origenId,internDocument.destinoId,internDocument.userId,Some(""),
+        internDocument.responsableArea,
+        internDocument.referenceDocument,
+        Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(internDocument.currentDate.get, Format.LOCAL_DATE).getTime)))
     }
   }

@@ -45,6 +45,19 @@ class InternDocumentService @Inject()(
     )
   }
 
+  def getInternDocumentsAdmin(officeId: String) = {
+    val internDocumentQuery = repository.query
+    val dependencyQuery = dependencyRepository.query
+    val typeDocumentQuery= typeDocumentRepository.query
+
+    val joinResult = for {
+      (((document, typeDocument),dependencyOrigin),dependencyDestiny) <- internDocumentQuery.filter(x => x.origenId =!= officeId && x.destinoId === officeId && x.estadoDocumento === "EN PROCESO") joinLeft
+        typeDocumentQuery on (_.tipoDocuId === _.id) joinLeft dependencyQuery on (_._1.origenId === _.id) joinLeft dependencyQuery on (_._1._1.destinoId === _.id)
+    }yield(document, typeDocument,dependencyOrigin,dependencyDestiny)
+
+    repository.db.run(joinResult.sortBy(_._1.fechaCreacion.desc).result)
+  }
+
   def getInternDocuments(userId: String) = {
 
     val typeDocumentQuery = typeDocumentRepository.query

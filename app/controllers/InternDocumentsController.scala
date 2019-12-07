@@ -69,6 +69,22 @@ class InternDocumentsController @Inject()(
     }
   }
 
+  def getDocumentsAdmin(officeId: String): Action[AnyContent] = Action.async { implicit request =>
+    documentInternService.getInternDocumentsAdmin(officeId)
+      .map(documents =>
+        JsonOk(
+          ResponseInternDocumentAdmin(ResponseCodes.SUCCESS,
+            documents.map(
+              value => toResponseAdminDocumentIntern(value._1,value._2,value._3,value._4)
+            ))
+        )
+      )recover {
+      case e =>
+        logger.error("error loading documents admin: " + e.getMessage)
+        JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al intentar mostrar los documentos internos"))
+    }
+  }
+
   def getDocumentsByOfficeId(typeDocumentId: String, officeId: String): Action[AnyContent] = Action.async { implicit request =>
     documentInternService.getInternDocumentsByOfficeId(typeDocumentId,officeId)
       .map(documents =>
