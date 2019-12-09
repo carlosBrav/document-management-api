@@ -72,6 +72,7 @@ object DocumentInternControllerHelper {
                                        firma: Option[String],
                                        fechaCreacion: Option[String],
                                        fechaModificacion: Option[String],
+                                       referenceDocument: Option[String],
                                        movementId: Option[String],
                                        numTram: Option[String]
                                      )
@@ -162,7 +163,7 @@ object DocumentInternControllerHelper {
       document.estadoDocumento,document.tipoDocuId, Some(typeDocument.get.nombreTipo),Some("%05d".format(document.numDocumento.get)),document.siglas,document.anio,
       document.asunto, document.observacion,document.origenId,Some(dependency.get.nombre),document.destinoId,Some(dependencyDest.nombre), document.userId,
       Some(user.get.nombre), Some(user.get.apellido), document.firma,
-      Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)), move.id,move.numTram)
+      Some(convertToString(document.fechaCreacion)),Some(convertToString(document.fechaModificacion)),document.referenceDocument, move.id,move.numTram)
     response
   }
 

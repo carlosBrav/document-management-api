@@ -35,6 +35,7 @@ GET           /api/userBossOffice                       controllers.UsersControl
 POST          /api/internDocument/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)
 POST          /api/correlativeMax                       controllers.UsersController.getCorrelativeMax
 GET           /api/internDocument/user/:userId          controllers.InternDocumentsController.getDocumentsByUserId(userId)
+GET           /api/internDocument/:typeDocumentId       controllers.InternDocumentsController.getDocumentsByTypeDocument(typeDocumentId)
 GET           /api/internDocument/admin/:officeId       controllers.InternDocumentsController.getDocumentsAdmin(officeId)
 GET           /api/internDocument/office/:officeId/documentId/:documentId      controllers.InternDocumentsController.getDocumentsByOfficeId(documentId,officeId)
 GET           /api/internDocument/circulars/:userId     controllers.InternDocumentsController.getCircularDocumentsByUserId(userId)
