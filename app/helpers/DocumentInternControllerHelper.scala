@@ -29,6 +29,7 @@ object DocumentInternControllerHelper {
                                         userId: Option[String],
                                         firma: Option[String],
                                         responsableArea: Option[String],
+                                        referenceDocument: Option[String],
                                         active: Boolean,
                                         currentDate: Option[String])
   implicit val requestResponseModelDocIntFormat: OFormat[RequestResponseModelDocInt] =

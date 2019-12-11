@@ -238,7 +238,7 @@ class UsersController @Inject()(
           _ <- movimientoService.updateStatusToMovement(movementRequest.movement.id.get)
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "success",
-            s"documento creado ${newDocumentIntern.id} con movimiento ${newMovement.id}")
+            s"documento creado ${newDocumentIntern.id.get} con movimiento ${newMovement.id.get}")
         )
         response recover {
           case _ => JsonOk(

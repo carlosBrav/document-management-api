@@ -148,7 +148,7 @@ object MovementsControllerHelper {
 
     val document = internDocument.getOrElse(DocumentosInternos(Some(""),
       Some(""), Some("").getOrElse(""),Some(-1),Some(""),Some(Calendar.getInstance().get(Calendar.YEAR).toString),
-      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),None,None))
+      Some(""),Some(""),"",Some(""),Some(""),Some(""),Some(""),Some(""),None,None))
 
     val response = ResponseAdminMovements(movement.id,
       movement.movimiento,
@@ -248,6 +248,7 @@ object MovementsControllerHelper {
         documentIntern.userId,
         documentIntern.firma,
         documentIntern.responsableArea,
+        documentIntern.referenceDocument,
         Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)),
         Some(new java.sql.Timestamp(convertToDate(documentIntern.currentDate.get, Format.LOCAL_DATE).getTime)))
 
