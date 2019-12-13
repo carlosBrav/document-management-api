@@ -109,4 +109,17 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     )
   }
 
+  def loadMovementsToAnalyze() = {
+
+    val queryMovements = TableQuery[MovimientoTable]
+    val queryDependency = TableQuery[DependenciaTable]
+    val internOffices = List("1001868","1001869","1001870","1001871","1001872")
+
+    val joinMovementsDependencies = for {
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.dependenciasId1.inSet(internOffices) && x.estadoDocumento === STATUS.IN_PROCESS) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+    } yield (movement, dependencyOrigin, dependencyDestiny)
+
+    db.run(joinMovementsDependencies.result)
+  }
+
 }

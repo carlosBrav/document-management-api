@@ -312,4 +312,18 @@ class UsersController @Inject()(
           JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al obtener usuario jefe de oficina"))
       }
   }
+
+  def loadMovementsToAnalyze(): Action[AnyContent] = Action.async { implicit request =>
+
+    movimientoService.loadMovementsToAnalyze()
+      .map(movements =>
+        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
+        )
+      )
+      .recover {
+        case ex =>
+          logger.error(s"error listando movmimentos para analizar: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al listar movimientos del usuario"))
+      }
+  }
 }

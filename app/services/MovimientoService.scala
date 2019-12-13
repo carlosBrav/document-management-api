@@ -113,4 +113,8 @@ class MovimientoService @Inject()(
   def loadByInternDocumentIds(internDocumentId: Seq[String]) = {
     repository.loadByInternDocumentId(internDocumentId)
   }
+
+  def loadMovementsToAnalyze() = {
+    repository.loadMovementsToAnalyze()
+  }
 }
