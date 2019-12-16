@@ -11,6 +11,9 @@ import utils.UniqueId
 
 object MovementsControllerHelper {
 
+  case class RequestAdvancedSearch(numTram: Option[String], observation: Option[String], officeId: Option[String])
+  implicit val requestAdvancedSearchFormat: OFormat[RequestAdvancedSearch] =  Json.format[RequestAdvancedSearch]
+
   case class ResponseModelMovement(id: Option[String],
                                     movimiento: Option[Int],
                                     numTram: Option[String],

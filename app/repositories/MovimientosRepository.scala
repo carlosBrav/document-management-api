@@ -122,4 +122,18 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     db.run(joinMovementsDependencies.result)
   }
 
+  def loadAdvancedSearch(numTram: Option[String], observation: Option[String], officeId: Option[String]) = {
+    val queryMovements = TableQuery[MovimientoTable]
+    val queryDependency = TableQuery[DependenciaTable]
+
+    val joinMovementsDependencies = for {
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.
+        filter(x=>x.numTram =!= x.id).
+        filter(x=>x.observacion.like(s"%${observation.getOrElse("")}%")).
+        filterOpt(numTram)(_.numTram === _).
+          filterOpt(officeId)(_.dependenciasId1 === _) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+    } yield (movement, dependencyOrigin, dependencyDestiny)
+
+    db.run(joinMovementsDependencies.result)
+  }
 }

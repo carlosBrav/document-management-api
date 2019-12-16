@@ -117,4 +117,8 @@ class MovimientoService @Inject()(
   def loadMovementsToAnalyze() = {
     repository.loadMovementsToAnalyze()
   }
+
+  def loadAdvancedSearch(numTram: Option[String], observation: Option[String], officeId: Option[String]) = {
+    repository.loadAdvancedSearch(numTram,observation,officeId)
+  }
 }

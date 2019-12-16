@@ -25,6 +25,7 @@ GET           /api/movements/:userId                    controllers.UsersControl
 POST          /api/movements/user/:userId/office/:officeId      controllers.UsersController.generateResponseToMovements(userId,officeId)
 POST          /api/movements/admin/:userId/office/:officeId      controllers.UsersController.generateResponseToMovementsAdmin(userId,officeId)
 GET           /api/movements/admin/analyze              controllers.UsersController.loadMovementsToAnalyze
+POST          /api/movements/advanced/search             controllers.MovementsController.advancedSearch
 
 #TYPEDOCUMENTS
 GET           /api/typeDocuments                        controllers.TypeDocumentController.getTypeDocuments
