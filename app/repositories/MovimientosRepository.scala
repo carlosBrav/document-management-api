@@ -59,7 +59,7 @@ class MovimientosRepository  @Inject()(dbConfigProvider: DatabaseConfigProvider,
     val endDate = new java.sql.Timestamp(convertToDate(startEndDate).getTime)
 
     val joinMovementsDependencies = for {
-      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.fechaEnvio.between(startDate,endDate)) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
+      ((movement, dependencyOrigin), dependencyDestiny) <- queryMovements.filter(x => x.fechaEnvio.between(startDate,endDate) && x.fechaIngreso.asColumnOf[Option[java.sql.Timestamp]].isEmpty && x.dependenciasId === "100392" && x.estadoDocumento === STATUS.IN_PROCESS) joinLeft queryDependency on (_.dependenciasId === _.id) joinLeft queryDependency on (_._1.dependenciasId1 === _.id)
     } yield (movement, dependencyOrigin, dependencyDestiny)
 
     db.run(joinMovementsDependencies.result)
