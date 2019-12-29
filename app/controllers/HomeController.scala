@@ -5,7 +5,7 @@ import java.io.File
 import javax.inject._
 import play.api._
 import play.api.mvc._
-import services.{DependencyService, UserService}
+import services.{DependencyService, UserService, TypeDocumentService}
 import helpers.HomeControllerHelper._
 import helpers.UsersControllerHelper._
 import play.api.libs.json.Json
@@ -23,6 +23,7 @@ import scala.concurrent.ExecutionContext
 @Singleton
 class HomeController @Inject()(cc: ControllerComponents,
                                dependencyService: DependencyService,
+                               typeDocumentService: TypeDocumentService,
                                userService: UserService) extends AbstractController(cc) {
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
@@ -50,15 +51,20 @@ class HomeController @Inject()(cc: ControllerComponents,
               dependency.tipo.getOrElse("-1"))
           }
       }
-      userResponse <- userService.getAll.map {
+      userResponse <- userService.getAllUsers().map {
         userList =>
           userList.map{
-            user => ResponseUser(user.id,user.usuario,user.estado,user.rolId,user.nombre,user.apellido,user.telefono,user.dependenciaId,
-              user.isSubOfficeBoss,user.isOfficeBoss)
+            user => toUserModel(user._1,user._2,user._3)
+          }
+      }
+      typeDocumentResponse <- typeDocumentService.getAll.map {
+        typeDocs =>
+          typeDocs.map {
+            document => ResponseTypeDocument(document.id.get,document.nombreTipo,document.flag1,document.flag2)
           }
       }
     } yield JsonOk(
-      InitialStateResponse(ResponseCodes.SUCCESS,"Success",Json.obj("dependencies" -> dependencyResponses, "users"-> userResponse))
+      InitialStateResponse(ResponseCodes.SUCCESS,"Success",Json.obj("dependencies" -> dependencyResponses, "users"-> userResponse, "typesDocument"-> typeDocumentResponse))
     )
     result recover {
       case ex =>

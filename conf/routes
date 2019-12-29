@@ -11,20 +11,20 @@ POST          /api/login                                controllers.AuthControll
 GET           /api/view2                                controllers.ViewsController.loadView2
 
 #MOVEMENTS
-POST          /api/movements/derived                    controllers.UsersController.deriveDocument
-POST          /api/movements/derivedAssigned            controllers.UsersController.deriveAssignedDocument
-GET           /api/movements/office/:officeId           controllers.UsersController.loadMovementsByOffice(officeId)
-GET           /api/movements/user/office/:officeId      controllers.UsersController.loadUserMovementsByOffice(officeId)
-GET           /api/movements/admin/office/:officeId     controllers.UsersController.loadAdminMovementsByOffice(officeId)
-GET           /api/movements/numTram/:numTram           controllers.UsersController.loadMovementsByTramNum(numTram)
-GET           /api/movements/currentDate                controllers.UsersController.loadMovementsByCurrentDate
-PUT           /api/movements                            controllers.UsersController.updateDocumentConfirm
-DELETE        /api/movements                            controllers.UsersController.deleteMovements
+POST          /api/movements/derived                    controllers.MovementsController.deriveDocument
+POST          /api/movements/derivedAssigned            controllers.MovementsController.deriveAssignedDocument
+GET           /api/movements/office/:officeId           controllers.MovementsController.loadMovementsByOffice(officeId)
+GET           /api/movements/user/office/:officeId      controllers.MovementsController.loadUserMovementsByOffice(officeId)
+GET           /api/movements/admin/office/:officeId     controllers.MovementsController.loadAdminMovementsByOffice(officeId)
+GET           /api/movements/numTram/:numTram           controllers.MovementsController.loadMovementsByTramNum(numTram)
+GET           /api/movements/currentDate                controllers.MovementsController.loadMovementsByCurrentDate
+PUT           /api/movements                            controllers.MovementsController.updateDocumentConfirm
+DELETE        /api/movements                            controllers.MovementsController.deleteMovements
 POST          /api/movements/:userId                    controllers.ViewsController.insertFromView2(userId)
-GET           /api/movements/:userId                    controllers.UsersController.loadMovementsByAssignedTo(userId)
+GET           /api/movements/:userId                    controllers.MovementsController.loadMovementsByAssignedTo(userId)
 POST          /api/movements/user/:userId/office/:officeId      controllers.UsersController.generateResponseToMovements(userId,officeId)
 POST          /api/movements/admin/:userId/office/:officeId      controllers.UsersController.generateResponseToMovementsAdmin(userId,officeId)
-GET           /api/movements/admin/analyze              controllers.UsersController.loadMovementsToAnalyze
+GET           /api/movements/admin/analyze              controllers.MovementsController.loadMovementsToAnalyze
 POST          /api/movements/advanced/search             controllers.MovementsController.advancedSearch
 
 #TYPEDOCUMENTS
@@ -32,6 +32,14 @@ GET           /api/typeDocuments                        controllers.TypeDocument
 
 #USERS
 GET           /api/userBossOffice                       controllers.UsersController.getOfficeBoss
+GET           /api/admin/user/getAll                    controllers.UsersController.getAllUsers
+PUT           /api/admin/user                           controllers.UsersController.updateUser
+DELETE        /api/admin/user/:userId                   controllers.UsersController.deleteUser(userId)
+GET           /api/admin/user/:userId                   controllers.UsersController.getUserById(userId)
+POST          /api/admin/user                           controllers.UsersController.createUser
+
+#OFFICES
+GET           /api/admin/offices                        controllers.OfficesController.getAllOffices
 
 #DOCUMENT INTERN
 POST          /api/internDocument/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)
@@ -42,7 +50,7 @@ GET           /api/internDocument/admin/:officeId       controllers.InternDocume
 GET           /api/internDocument/office/:officeId/documentId/:documentId      controllers.InternDocumentsController.getDocumentsByOfficeId(documentId,officeId)
 GET           /api/internDocument/circulars/:userId     controllers.InternDocumentsController.getCircularDocumentsByUserId(userId)
 GET           /api/circularDetails/:documentId          controllers.InternDocumentsController.getCircularDetails(documentId)
-PUT           /api/internDocument/:documentId           controllers.InternDocumentsController.editCircularDocument(documentId)
+PUT           /api/internDocument/:documentId           controllers.InternDocumentsController.editInternDocument(documentId)
 DELETE        /api/internDocument                       controllers.InternDocumentsController.deleteDocuments
 POST          /api/internDocument                       controllers.InternDocumentsController.createInternDocument
 #INITIAL

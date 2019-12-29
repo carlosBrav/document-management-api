@@ -1,5 +1,7 @@
 package controllers
 
+import java.util.Date
+
 import javax.inject.Inject
 import play.api.Logger
 import play.api.mvc._
@@ -12,7 +14,8 @@ import helpers.MovementsControllerHelper._
 import helpers.UsersControllerHelper._
 import play.api.libs.json.{JsValue, Json}
 import utils._
-import scala.util.Success
+
+import scala.util.{Failure, Success}
 
 
 class UsersController @Inject()(
@@ -24,169 +27,6 @@ class UsersController @Inject()(
 
   implicit val ec: ExecutionContext = defaultExecutionContext
   val logger = Logger(this.getClass)
-
-  def loadMovementsByAssignedTo(userId: String): Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadMovementsByAssignedTo(userId)
-      .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al listar movimientos del usuario"))
-      }
-  }
-
-  def loadMovementsByOffice(officeId: String): Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadMovementsByOffice(officeId)
-      .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
-      }
-  }
-
-  def loadUserMovementsByOffice(officeId: String) : Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadUserMovementsByOfficeId(officeId)
-      .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
-      }
-  }
-
-  def loadAdminMovementsByOffice(officeId: String) : Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadAdminMovementsByOffice(officeId)
-      .map(movements =>
-        JsonOk(ResponseAdminMovement(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseAdminMovements(move._1,move._2,move._3)))
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos de la oficina $officeId"))
-      }
-  }
-
-  def loadMovementsByTramNum(numTram: String): Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadMovementsByTramNum(numTram)
-      .map(movements =>
-        JsonOk(
-          ResponseMovements(ResponseCodes.SUCCESS, "Success",
-            movements.map(move =>
-              toResponseMovements(move._1,move._2,move._3))
-          )
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos"))
-      }
-  }
-
-  def loadMovementsByCurrentDate: Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadMovementsByCurrentDate
-      .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
-        )
-      )
-      .recover {
-        case ex =>
-          logger.error(s"error listando movmimentos: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al listar movimientos"))
-      }
-  }
-
-  def updateDocumentConfirm: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestUpdateMovements].fold(
-      invalidRequest => {
-        val errors =  invalidResponseFormatter(invalidRequest)
-        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
-        Future.successful(
-          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
-        )
-      },
-      movementRequest => {
-        val response = for {
-          _ <- movimientoService.updateFechaIngMovements(movementRequest.userId,
-            movementRequest.movementsIds, movementRequest.currentDate, movementRequest.asignadoA)
-        } yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movementsIds.length} documentos confirmados")
-        )
-        response recover {
-          case _ => JsonOk(
-            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar actualizar las fechas de ingreso")
-          )
-        }
-      }
-    )
-  }
-
-  def deriveDocument: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestDeriveMovements].fold(
-      invalidRequest => {
-        val errors =  invalidResponseFormatter(invalidRequest)
-        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
-        Future.successful(
-          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
-        )
-      },
-      movementRequest => {
-        val newMovements = movementRequest.toMovementsModel
-        val response = for {
-          _ <- movimientoService.saveDerivedMovements(movementRequest.userId, movementRequest.movements.map(_.id.get), newMovements)
-        } yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos derivados.")
-        )
-        response recover {
-          case _ => JsonOk(
-            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
-          )
-        }
-      }
-    )
-  }
-
-  def deriveAssignedDocument: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestDeriveMovements].fold(
-      invalidRequest => {
-        val errors =  invalidResponseFormatter(invalidRequest)
-        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
-        Future.successful(
-          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
-        )
-      },
-      movementRequest => {
-        val newMovements = movementRequest.toMovementsModel
-        val response = for {
-          _ <- movimientoService.saveDerivedAssignedMovements(movementRequest.userId, movementRequest.movements.map(_.id.get), newMovements)
-        } yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success", s"${movementRequest.movements.length} movimientos derivados.")
-        )
-        response recover {
-          case _ => JsonOk(
-            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar derivar documentos")
-          )
-        }
-      }
-    )
-  }
 
   def getCorrelativeMax: Action[JsValue] = Action.async(parse.json) { implicit request =>
     request.body.validate[maxCorrelativeRequest].fold(
@@ -276,35 +116,10 @@ class UsersController @Inject()(
     )
   }
 
-  def deleteMovements : Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestDeleteMovements].fold(
-      invalidRequest => {
-        val errors =  invalidResponseFormatter(invalidRequest)
-        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
-        Future.successful(
-          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
-        )
-      },
-      movementRequest => {
-        val response = for {
-          _ <- movimientoService.deleteMovement(movementRequest.movementsIds)
-        }yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "success",
-            s"Se han eliminado ${movementRequest.movementsIds.length} movimientos")
-        )
-        response recover {
-          case _ => JsonOk(
-            ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar eliminar movimientos")
-          )
-        }
-      }
-    )
-  }
-
   def getOfficeBoss : Action[AnyContent] = Action.async { implicit request =>
     userService.getOfficeBoss
       .map(user =>{
-        JsonOk(userResponse(ResponseCodes.SUCCESS, toUserModel(user.get)))
+        JsonOk(userSimpleResponse(ResponseCodes.SUCCESS, toUserSimpleModel(user.get)))
       })
       .recover {
         case ex =>
@@ -313,17 +128,101 @@ class UsersController @Inject()(
       }
   }
 
-  def loadMovementsToAnalyze(): Action[AnyContent] = Action.async { implicit request =>
-
-    movimientoService.loadMovementsToAnalyze()
-      .map(movements =>
-        JsonOk(ResponseMovements(ResponseCodes.SUCCESS, "Success", movements.map(move => toResponseMovements(move._1,move._2,move._3)))
-        )
-      )
+  def getAllUsers: Action[AnyContent] = Action.async { implicit request =>
+    userService.getAllUsers()
+      .map(users =>{
+        JsonOk(ListUserResponse(ResponseCodes.SUCCESS, users.map(user => toUserModel(user._1,user._2,user._3))))
+      })
       .recover {
         case ex =>
-          logger.error(s"error listando movmimentos para analizar: $ex")
-          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, "Error al listar movimientos del usuario"))
+          logger.error(s"error obteniendo lista de usuarios: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al obtener lista de usuarios"))
       }
   }
+
+  def getUserById(userId: String): Action[AnyContent] = Action.async { implicit request =>
+    userService.getById(userId)
+      .map(user =>{
+        JsonOk(userSimpleResponse(ResponseCodes.SUCCESS,toUserSimpleModel(user.get)))
+      })
+      .recover {
+        case ex =>
+          logger.error(s"error obteniendo usuario por Id: $ex")
+          JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al obtener datos del usuario"))
+      }
+  }
+
+  def deleteUser(userId: String): Action[AnyContent] = Action.async { implicit request =>
+    val result: Future[Result] = for {
+      Success(user) <- userService.loadById(userId)
+      _ <- Future.successful(userService.updateById(user.id.get, user.copy(estado = false)))
+    } yield  JsonOk(
+      Response[String](ResponseCodes.SUCCESS,"Succes", s"Success")
+    )
+    result recover {
+      case _ => JsonOk(
+        ResponseError[String](ResponseCodes.GENERIC_ERROR, "User could not be disabled")
+      )
+    }
+  }
+
+  def updateUser: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[UpdateUser].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      userRequest => {
+        val result = for {
+          Success(userOld) <- userService.loadById(userRequest.user.id.get)
+          newUser = userOld.copy(
+            estado = userRequest.user.estado,
+            nombre = userRequest.user.nombre,
+            apellido = userRequest.user.apellido,
+            telefono = userRequest.user.telefono,
+            dependenciaId = userRequest.user.dependenciaId,
+            rolId = userRequest.user.rolId,
+            email = userRequest.user.email,
+            fechaModificacion = Some(new java.sql.Timestamp(new Date().getTime))
+          )
+          _ <- userService.updateById(userRequest.user.id.get,newUser)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "Success", "Success")
+        )
+        result recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, "No se puede actualizar al Usuario")
+          )
+        }
+      }
+    )
+  }
+
+  def createUser: Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestCreateUser].fold(
+      invalidRequest => {
+        val errors =  invalidResponseFormatter(invalidRequest)
+        val found = Constants.get(ResponseCodes.MISSING_FIELDS)
+        Future.successful(
+          Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
+        )
+      },
+      userRequest => {
+        val result = for {
+          _ <- userService.save(toNewUser(userRequest))
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "Success", "Success")
+        )
+        result recover {
+          case _ => JsonOk(
+            ResponseError[String](ResponseCodes.GENERIC_ERROR, "No se pudo crear el usuario")
+          )
+        }
+      }
+    )
+  }
+
 }

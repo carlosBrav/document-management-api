@@ -145,8 +145,8 @@ class InternDocumentsController @Inject()(
     }
   }
 
-  def editCircularDocument(documentId: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestEditCircularDocument].fold(
+  def editInternDocument(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+    request.body.validate[RequestEditInternDocument].fold(
       invalidRequest => {
         val errors =  invalidResponseFormatter(invalidRequest)
         val found = Constants.get(ResponseCodes.MISSING_FIELDS)
@@ -154,18 +154,25 @@ class InternDocumentsController @Inject()(
           Ok(Json.toJson(ResponseErrorLogin[Seq[String]](ResponseCodes.MISSING_FIELDS, s"${found.message}", errors)))
         )
       },
-      editRequest => {
+      internDocumentRequest => {
         val result = for {
-          Success(document) <- documentInternService.loadById(documentId)
-          newDocument = document.get.copy(asunto = editRequest.asunto,origenId = editRequest.origenId.get)
-          _ <- Future.successful(documentInternService.updateById(documentId, newDocument))
-        }yield JsonOk(
-          Response[String](ResponseCodes.SUCCESS, "Success", "Documento actualizado correctamente")
+          Success(internDocument) <- documentInternService.loadById(id)
+          newInternDocument = internDocument.get.copy(
+            userId = Some(internDocumentRequest.userId.getOrElse(internDocument.get.userId.get)),
+            asunto = Some(internDocumentRequest.asunto.getOrElse(internDocument.get.asunto.get)),
+            origenId = internDocumentRequest.origenId.getOrElse(internDocument.get.origenId)
+          )
+          _ <- documentInternService.updateById(id,newInternDocument)
+        } yield JsonOk(
+          Response[String](ResponseCodes.SUCCESS, "success",
+            s"Se ha creado el documento correctamente")
         )
         result recover {
-          case t: Throwable =>
-            logger.error(s"Update circular exception ${t.getMessage}")
-            JsonOk(ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar actualizar el documento circular"))
+          case e =>
+            println("error al actualizar DI ", e.getMessage)
+            JsonOk(
+              ResponseError[String](ResponseCodes.GENERIC_ERROR, s"Error al intentar actualizar documento interno")
+            )
         }
       }
     )
@@ -237,7 +244,6 @@ class InternDocumentsController @Inject()(
       }
     )
   }
-  
 }
 
 

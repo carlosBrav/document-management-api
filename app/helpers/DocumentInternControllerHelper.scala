@@ -9,12 +9,11 @@ import utils.{Format, UniqueId}
 
 object DocumentInternControllerHelper {
 
+  case class RequestEditInternDocument(userId: Option[String] = None, asunto: Option[String] = None, origenId: Option[String] = None)
+  implicit val requestEditInternDocumentFormat: OFormat[RequestEditInternDocument] = Json.format[RequestEditInternDocument]
+
   case class RequestDeleteDocuments(documentsIds: Seq[String])
   implicit val requestDeleteDocumentsFormat: OFormat[RequestDeleteDocuments] = Json.format[RequestDeleteDocuments]
-
-  case class RequestEditCircularDocument(asunto: Option[String],
-                                         origenId: Option[String])
-  implicit val requestEditCircularDocument: OFormat[RequestEditCircularDocument] = Json.format[RequestEditCircularDocument]
 
   case class RequestResponseModelDocInt(
                                         estadoDocumento: Option[String],

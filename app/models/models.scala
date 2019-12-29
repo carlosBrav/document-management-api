@@ -25,6 +25,7 @@ case class Usuario(id: Option[String],
                    dependenciaId: Option[String],
                    isSubOfficeBoss: Boolean,
                    isOfficeBoss: Boolean,
+                   email: String,
                    fechaCreacion: Option[Timestamp] ,
                    fechaModificacion: Option[Timestamp]
                   ) extends BaseEntity

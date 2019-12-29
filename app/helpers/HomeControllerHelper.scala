@@ -1,7 +1,7 @@
 package helpers
 
 import helpers.UsersControllerHelper.userModelResponse
-import models.Usuario
+import models.{Usuario, Dependencias, TipoDocumento}
 import play.api.libs.json.{JsObject, Json, OFormat}
 
 object HomeControllerHelper {
@@ -27,7 +27,22 @@ object HomeControllerHelper {
 
   implicit val responseUserFormat: OFormat[ResponseUser] = Json.format[ResponseUser]
 
+  case class ResponseTypeDocument(id: String,
+                                  nombreTipo: String,
+                                  flag1: Option[String],
+                                  flag2: Option[String])
+
+  implicit val responseTypeDocumentFormat: OFormat[ResponseTypeDocument] = Json.format[ResponseTypeDocument]
+
   case class InitialStateResponse(responseCode: Int, responseMessage: String, data: JsObject)
   implicit val initialStateResponseFormat: OFormat[InitialStateResponse] = Json.format[InitialStateResponse]
+
+  def toResponseDependency(dependency: Dependencias) = {
+    ResponseDependency(dependency.id,dependency.nombre,dependency.estado,dependency.siglas,dependency.codigo,dependency.tipo.getOrElse(""))
+  }
+
+  def toResponseTypeDocument(typeDocument: TipoDocumento)={
+
+  }
 
 }

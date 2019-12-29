@@ -1,22 +1,22 @@
 package services
 
 import javax.inject.{Inject, Singleton}
-import models.{DocumentosInternos, Movimientos, Usuario, UsuarioTable}
-import repositories.{DocumentsInternRepository, MovimientosRepository, UserRepository}
+import models.{Usuario, UsuarioTable}
+import repositories.{DocumentsInternRepository, MovimientosRepository, UserRepository, RolRepository, DependencyRepository}
 import utils.ResponseCodes
 import slick.jdbc.MySQLProfile.api._
 
 import scala.concurrent.ExecutionContext.Implicits.global
-import scala.concurrent.Future
 import scala.util.{Failure, Try}
 import utils.BCryptPass.validateHashPass
-import utils.CustomExceptions
 import play.api.Logger
 
 @Singleton
 class UserService @Inject()(
                              override val repository: UserRepository,
                              documentInternsRepository: DocumentsInternRepository,
+                             rolRepository: RolRepository,
+                             dependencyRepository: DependencyRepository,
                              movimientosRepository: MovimientosRepository
                            )
   extends BaseEntityService[UsuarioTable, Usuario, UserRepository]{
@@ -61,5 +61,17 @@ class UserService @Inject()(
 
   def getOfficeBoss = {
     repository.getOfficeBoss
+  }
+
+  def getAllUsers() = {
+    val rolQuery = rolRepository.query
+    val officeQuery = dependencyRepository.query
+    val userQuery = repository.query
+
+    val joinResult = for {
+      ((user, rol), office) <- userQuery joinLeft rolQuery on (_.rolId === _.id) joinLeft officeQuery on (_._1.dependenciaId === _.id)
+    }yield(user,rol,office)
+
+    repository.db.run(joinResult.result)
   }
 }
