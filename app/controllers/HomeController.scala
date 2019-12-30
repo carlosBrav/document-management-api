@@ -48,7 +48,7 @@ class HomeController @Inject()(cc: ControllerComponents,
               dependency.estado,
               dependency.siglas,
               dependency.codigo,
-              dependency.tipo.getOrElse("-1"))
+              dependency.tipo.getOrElse(" "))
           }
       }
       userResponse <- userService.getAllUsers().map {

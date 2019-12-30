@@ -39,7 +39,11 @@ GET           /api/admin/user/:userId                   controllers.UsersControl
 POST          /api/admin/user                           controllers.UsersController.createUser
 
 #OFFICES
-GET           /api/admin/offices                        controllers.OfficesController.getAllOffices
+GET           /api/admin/office/getAll                  controllers.OfficesController.getAllOffices
+GET           /api/admin/office/:officeId               controllers.OfficesController.getOfficeById(officeId)
+PUT           /api/admin/office                         controllers.OfficesController.updateOffice
+DELETE        /api/admin/office/:officeId               controllers.OfficesController.deleteOffice(officeId)
+POST          /api/admin/office                         controllers.OfficesController.createOffice
 
 #DOCUMENT INTERN
 POST          /api/internDocument/office/:officeId/user/:userId   controllers.InternDocumentsController.createDocumentCircular(officeId,userId)

@@ -23,6 +23,9 @@ object UsersControllerHelper {
                               )
   implicit val requestCreateUserFormat: OFormat[RequestCreateUser] = Json.format[RequestCreateUser]
 
+  case class CreateUser(user: RequestCreateUser)
+  implicit val createUserFormat: OFormat[CreateUser] = Json.format[CreateUser]
+
   case class RequestUpdateUser(
                                 id: Option[String],
                                 usuario: String,

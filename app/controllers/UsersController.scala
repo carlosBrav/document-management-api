@@ -155,13 +155,18 @@ class UsersController @Inject()(
   def deleteUser(userId: String): Action[AnyContent] = Action.async { implicit request =>
     val result: Future[Result] = for {
       Success(user) <- userService.loadById(userId)
-      _ <- Future.successful(userService.updateById(user.id.get, user.copy(estado = false)))
+      _ <- Future.successful(
+        userService.updateById(user.id.get,
+          user.copy(
+            estado = !user.estado,
+            fechaModificacion = Some(new java.sql.Timestamp(new Date().getTime))
+          )))
     } yield  JsonOk(
       Response[String](ResponseCodes.SUCCESS,"Succes", s"Success")
     )
     result recover {
       case _ => JsonOk(
-        ResponseError[String](ResponseCodes.GENERIC_ERROR, "User could not be disabled")
+        ResponseError[String](ResponseCodes.GENERIC_ERROR, "No se puede inactivar usuario")
       )
     }
   }
@@ -202,7 +207,7 @@ class UsersController @Inject()(
   }
 
   def createUser: Action[JsValue] = Action.async(parse.json) { implicit request =>
-    request.body.validate[RequestCreateUser].fold(
+    request.body.validate[CreateUser].fold(
       invalidRequest => {
         val errors =  invalidResponseFormatter(invalidRequest)
         val found = Constants.get(ResponseCodes.MISSING_FIELDS)
@@ -212,7 +217,7 @@ class UsersController @Inject()(
       },
       userRequest => {
         val result = for {
-          _ <- userService.save(toNewUser(userRequest))
+          _ <- userService.save(toNewUser(userRequest.user))
         } yield JsonOk(
           Response[String](ResponseCodes.SUCCESS, "Success", "Success")
         )
