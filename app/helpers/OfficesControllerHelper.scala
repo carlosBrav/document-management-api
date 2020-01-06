@@ -13,7 +13,8 @@ object OfficesControllerHelper {
                           nombre: String,
                           siglas: Option[String],
                           codigo: String,
-                          tipo: Option[String]
+                          tipo: Option[String],
+                          estado: Boolean
                         )
   implicit val officeModel: OFormat[OfficeModel] = Json.format[OfficeModel]
 
@@ -28,17 +29,17 @@ object OfficesControllerHelper {
                                 )
   implicit val officeModelCreate: OFormat[OfficeModelCreate] = Json.format[OfficeModelCreate]
 
-  case class UpdateOfficeRequest(responseCode: Int, office: OfficeModel)
+  case class UpdateOfficeRequest(office: OfficeModel)
   implicit val updateOfficeRequest: OFormat[UpdateOfficeRequest] = Json.format[UpdateOfficeRequest]
 
-  case class CreateOfficeRequest(responseCode: Int, office: OfficeModelCreate)
+  case class CreateOfficeRequest(office: OfficeModelCreate)
   implicit val createOfficeRequest: OFormat[CreateOfficeRequest] = Json.format[CreateOfficeRequest]
 
   case class OfficeResponseModel(responseCode: Int, office: OfficeModel)
   implicit val officeResponseModel: OFormat[OfficeResponseModel] = Json.format[OfficeResponseModel]
 
   def toOfficeModel(office: Dependencias) = {
-    OfficeModel(office.id.get,office.nombre,office.siglas,office.codigo,Some(office.tipo.getOrElse("-1")))
+    OfficeModel(office.id.get,office.nombre,office.siglas,office.codigo,Some(office.tipo.getOrElse("-1")),office.estado)
   }
 
   def toNewOffice(office: OfficeModelCreate) = {
