@@ -42,13 +42,13 @@ class UsersController @Inject()(
         values.map(value => {
           JsonOk(
             Response[maxCorrelativeResponse](ResponseCodes.SUCCESS, "success",
-              if(value.getOrElse(0) == 0){
+              if(value.isEmpty){
                 maxCorrelativeResponse("%05d".format(1),correlativeRequest.siglas, getCurrentYear().toString)
               }else{
                 if(value.get.anio.get == getCurrentYear().toString){
                   maxCorrelativeResponse("%05d".format(value.get.numDocumento.get + 1),value.get.siglas.get, value.get.anio.get)
                 }else{
-                  maxCorrelativeResponse("%05d".format(1),value.get.siglas.get, value.get.anio.get)
+                  maxCorrelativeResponse("%05d".format(1),value.get.siglas.get, getCurrentYear().toString)
                 }
               }
             )
