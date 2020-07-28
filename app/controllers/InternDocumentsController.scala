@@ -160,7 +160,8 @@ class InternDocumentsController @Inject()(
           newInternDocument = internDocument.get.copy(
             userId = Some(internDocumentRequest.userId.getOrElse(internDocument.get.userId.get)),
             asunto = Some(internDocumentRequest.asunto.getOrElse(internDocument.get.asunto.get)),
-            origenId = internDocumentRequest.origenId.getOrElse(internDocument.get.origenId)
+            origenId = internDocumentRequest.origenId.getOrElse(internDocument.get.origenId),
+            destinoId = Some(internDocumentRequest.destinoId.getOrElse(internDocument.get.destinoId.get))
           )
           _ <- documentInternService.updateById(id,newInternDocument)
         } yield JsonOk(

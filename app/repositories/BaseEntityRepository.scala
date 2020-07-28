@@ -57,7 +57,7 @@ abstract class BaseEntityRepository[T <: BaseEntityTable[E], E <: BaseEntity : C
 
   def getAll: Future[Seq[E]] = {
     val action = getAllQuery.sortBy(x => x.fechaCreacion.desc).result
-    //println(action.statements.head)
+    println(action.statements.head)
     db.run(action)
   }
 

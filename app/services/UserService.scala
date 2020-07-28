@@ -24,6 +24,7 @@ class UserService @Inject()(
   val logger = Logger(this.getClass)
 
   def processLogin(usuario: String, password: String) = {
+    println("PASS ", password)
     val userLogin = {
       for {
         userResult <- repository.loadByUserName(usuario)

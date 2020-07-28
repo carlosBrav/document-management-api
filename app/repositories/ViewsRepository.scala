@@ -16,16 +16,27 @@ class ViewsRepository @Inject()(dbConfigProvider: DatabaseConfigProvider, movimi
   val dbConfig: DatabaseConfig[JdbcProfile] = dbConfigProvider.get[JdbcProfile]
   val db: JdbcBackend#DatabaseDef = dbConfig.db
 
+  val destinations = List("1001868","1001869","1001870","1001871","1001872")
+
+  val queryVista2 = TableQuery[Vista2Table]
+  val queryVista1 = TableQuery[Vista1Table]
+
   def getAllView2Today(documents: Seq[Movimientos]) : Future[Seq[(Vista2, Option[Vista1])]] = {
-
-    val destinations = List("1001868","1001869","1001870","1001871","1001872")
-
-    val queryVista2 = TableQuery[Vista2Table]
-    val queryVista1 = TableQuery[Vista1Table]
 
     val joinVistas = for {
       (vista2, vista1) <- queryVista2
         .filter(x => x.destCod.inSet(destinations) && x.destCod.inSetBind(destinations))
+        .sortBy(x => x.moviFecEnv.desc) joinLeft queryVista1.filter(x => x.docuPric === "1") on (_.tramNum === _.tramNum)
+    } yield(vista2, vista1)
+
+    db.run(joinVistas.result)
+  }
+
+  def getMovementsByTramNum(tramNum: String) = {
+
+    val joinVistas = for {
+      (vista2, vista1) <- queryVista2
+        .filter(x => x.tramNum === tramNum)
         .sortBy(x => x.moviFecEnv.desc) joinLeft queryVista1.filter(x => x.docuPric === "1") on (_.tramNum === _.tramNum)
     } yield(vista2, vista1)
 

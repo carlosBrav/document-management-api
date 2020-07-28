@@ -9,7 +9,7 @@ object HomeControllerHelper {
   case class ResponseDependency(id: Option[String],
                                  nombre: String,
                                  estado: Boolean,
-                                 siglas: Option[String],
+                                 siglas: String,
                                  codigo: String,
                                  tipo: String)
   implicit val responseDependencyFormat: OFormat[ResponseDependency] = Json.format[ResponseDependency]
@@ -38,7 +38,7 @@ object HomeControllerHelper {
   implicit val initialStateResponseFormat: OFormat[InitialStateResponse] = Json.format[InitialStateResponse]
 
   def toResponseDependency(dependency: Dependencias) = {
-    ResponseDependency(dependency.id,dependency.nombre,dependency.estado,dependency.siglas,dependency.codigo,dependency.tipo.getOrElse(""))
+    ResponseDependency(dependency.id,dependency.nombre,dependency.estado,dependency.siglas.getOrElse(""),dependency.codigo,dependency.tipo.getOrElse(""))
   }
 
   def toResponseTypeDocument(typeDocument: TipoDocumento)={

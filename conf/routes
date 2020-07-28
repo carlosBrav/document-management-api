@@ -9,6 +9,7 @@ POST          /api/login                                controllers.AuthControll
 
 #VIEWS
 GET           /api/view2                                controllers.ViewsController.loadView2
+GET           /api/view2/:tramNum             controllers.ViewsController.getMovementByTramNum(tramNum)
 
 #MOVEMENTS
 POST          /api/movements/derived                    controllers.MovementsController.deriveDocument

@@ -46,7 +46,7 @@ class HomeController @Inject()(cc: ControllerComponents,
             dependency => ResponseDependency(dependency.id,
               dependency.nombre,
               dependency.estado,
-              dependency.siglas,
+              dependency.siglas.getOrElse(""),
               dependency.codigo,
               dependency.tipo.getOrElse(" "))
           }

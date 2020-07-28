@@ -9,7 +9,10 @@ import utils.{Format, UniqueId}
 
 object DocumentInternControllerHelper {
 
-  case class RequestEditInternDocument(userId: Option[String] = None, asunto: Option[String] = None, origenId: Option[String] = None)
+  case class RequestEditInternDocument(userId: Option[String] = None,
+                                       asunto: Option[String] = None,
+                                       origenId: Option[String] = None,
+                                       destinoId: Option[String] = None)
   implicit val requestEditInternDocumentFormat: OFormat[RequestEditInternDocument] = Json.format[RequestEditInternDocument]
 
   case class RequestDeleteDocuments(documentsIds: Seq[String])

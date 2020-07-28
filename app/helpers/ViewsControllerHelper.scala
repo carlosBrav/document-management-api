@@ -6,6 +6,8 @@ import utils.Constants._
 import utils.UniqueId
 import java.util.Date
 
+import helpers.MovementsControllerHelper.ResponseModelMovement
+
 object ViewsControllerHelper {
 
   case class ResponseView2(tramNum: String,
@@ -51,6 +53,9 @@ object ViewsControllerHelper {
 
   case class ResponseListView2(responseCode: Int, responseMessage: String, data: Seq[ResponseView2])
   implicit val responseListView2Format: OFormat[ResponseListView2] = Json.format[ResponseListView2]
+
+  case class ResponseMovementsByTramNum(responseCode: Int, responseMessage: String, dataView2: Seq[ResponseView2], dataLocal: Seq[ResponseModelMovement])
+  implicit val responseMovementsByTramNumFormat: OFormat[ResponseMovementsByTramNum] = Json.format[ResponseMovementsByTramNum]
 
   def toResponseView2(view2: Vista2, vista1: Option[Vista1]) = {
 

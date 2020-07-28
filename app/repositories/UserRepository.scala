@@ -26,7 +26,7 @@ class UserRepository @Inject()(dbConfigProvider: DatabaseConfigProvider,
     val dependencyQuery = dependencyRepository.query
 
     val joinUserRol = for {
-      ((user, rol), typeDocument) <- userQuery.filter(_.usuario === userName) joinLeft rolQuery on (_.rolId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id)
+      ((user, rol), typeDocument) <- userQuery.filter(x => x.usuario === userName) joinLeft rolQuery on (_.rolId === _.id) joinLeft dependencyQuery on (_._1.dependenciaId === _.id)
     } yield ((user, rol), typeDocument)
 
     db.run(joinUserRol.result.headOption)

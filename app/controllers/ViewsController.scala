@@ -1,5 +1,6 @@
 package controllers
 
+import helpers.MovementsControllerHelper.{ResponseMovements, toResponseMovements}
 import javax.inject.Inject
 import play.api.mvc._
 import play.api.libs.json._
@@ -60,6 +61,28 @@ class ViewsController @Inject()(
         }
       }
     )
+  }
 
+  def getMovementByTramNum(tramNum: String): Action[AnyContent] = Action.async{ implicit request =>
+
+    val listResult = for {
+      movementsFromView2 <-viewService.getMovementsByTramNum(tramNum)
+      movementsLocal <- movimiento.loadMovementsByTramNum(tramNum)
+    } yield {
+      JsonOk(ResponseMovementsByTramNum(
+        ResponseCodes.SUCCESS,
+        "success",
+        movementsFromView2.map(view => toResponseView2(view._1, view._2)),
+        movementsLocal.map(move => toResponseMovements(move._1,move._2,move._3))
+        )
+      )
+    }
+    listResult recover {
+      case e =>
+        val messageError = Constants.get(e.getMessage.toInt)
+        JsonOk(
+          ResponseError[String](e.getMessage.toInt, s"${messageError.message}")
+        )
+    }
   }
 }

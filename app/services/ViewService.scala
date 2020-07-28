@@ -36,4 +36,8 @@ class ViewService @Inject()(
     listReturn
   }
 
+  def getMovementsByTramNum(tramNum: String) = {
+    repository.getMovementsByTramNum(tramNum)
+  }
+
 }
